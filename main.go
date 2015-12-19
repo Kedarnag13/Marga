@@ -19,6 +19,9 @@ func main() {
 	r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
 	r.HandleFunc("/issues", users.Issue.Index).Methods("GET")
 
+	// Point Routes
+	r.HandleFunc("/point_count", users.Ratings.MyPointCount).Methods("POST")
+
 	http.Handle("/", r)
 	// HTTP Listening Port
 	log.Println("main : Started : Listening on: http://localhost:3000 ...")
