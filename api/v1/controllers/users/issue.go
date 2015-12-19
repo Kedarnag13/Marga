@@ -4,11 +4,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/asaskevich/govalidator"
+	"github.com/gorilla/mux"
+	"github.com/kedarnag13/Marga/api/v1/controllers"
 	"github.com/kedarnag13/Marga/api/v1/models"
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type issueController struct{}
@@ -77,6 +80,99 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 index_end:
 }
 
+type myissuesController struct{}
+
+var MyIssues myissuesController
+
+func (m myissuesController) My_issues(rw http.ResponseWriter, req *http.Request) {
+
+	var my_issues models.IssueList
+	var no_of_users int
+
+	flag := 1
+
+	vars := mux.Vars(req)
+	id := vars["id"]
+	issue_id, err := strconv.Atoi(id)
+
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	get_issues, err := db.Query("select name, type, description, latitude, longitude, image, status, address, user_id from issues where id = $1 ", issue_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	user_session_existance := controllers.Check_for_user_session(issue_id)
+	if user_session_existance == false {
+		b, err := json.Marshal(models.ProfileErrorMessage{
+			Success: "false",
+			Error:   "Require Login",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto my_issue_index_end
+	}
+
+	if flag == 0 {
+		var name string
+		var issue_type string
+		var description string
+		var latitude float64
+		var longitude float64
+		var image string
+		var status bool
+		var address string
+		var user_id int
+		for get_issues.Next() {
+
+			err := get_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+			if err != nil {
+				log.Fatal(err)
+			}
+			issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
+			no_of_users++
+			flag = 0
+		}
+	}
+
+	if flag == 0 {
+		b, err := json.Marshal(models.IssueList{
+			Success:       "true",
+			No_Of_Users:   no_of_users,
+			Issue_Details: my_issues.Issue_Details,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto my_issue_index_end
+	}
+	if flag == 1 {
+		b, err := json.Marshal(models.IssueErrorMessage{
+			Success: "false",
+			Error:   "No Issues",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+	}
+my_issue_index_end:
+}
+
 func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 
 	var i models.Issue
@@ -98,6 +194,7 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if flag == 1 {
 		if i.Name == "" || i.Type == "" || i.Description == "" || i.Image == "" || i.Status == false || i.Address == "" {
 			result, err := govalidator.ValidateStruct(i)
@@ -131,11 +228,11 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 			if err != nil || prepare_insert_issue == nil {
 				log.Fatal(err)
 			}
-			issue_res, err := prepare_insert_issue.Exec(id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, id)
+			issue_res, err := prepare_insert_issue.Exec(id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id)
 			if err != nil || issue_res == nil {
 				log.Fatal(err)
 			}
-			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, id}
+			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id}
 			b, err := json.Marshal(models.SuccessfulCreateIssue{
 				Success: "true",
 				Message: "Issue created Successfully!",
