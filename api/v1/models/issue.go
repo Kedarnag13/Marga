@@ -38,6 +38,6 @@ type SuccessfulCreateIssue struct {
 
 type IssueList struct {
 	Success       string
-	No_Of_Users   int
+	No_Of_Issues  int
 	Issue_Details []IssueDetails
 }

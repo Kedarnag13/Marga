@@ -17,7 +17,7 @@ type ratingsController struct{}
 
 var Ratings ratingsController
 
-func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Request) {
+func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 
 	var point models.Mypoints
 

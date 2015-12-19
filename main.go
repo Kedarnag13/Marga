@@ -19,9 +19,10 @@ func main() {
 	r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
 	r.HandleFunc("/issues", users.Issue.Index).Methods("GET")
 	r.HandleFunc("/user/{id:[0-9]+}/issues", users.Issue.Index).Methods("GET")
+	r.HandleFunc("/issues/{type:[a-z]+}", users.Issue.Get_issues_on_type).Methods("GET")
 
-	// Point Routes
-	r.HandleFunc("/point_count", users.Ratings.MyPointCount).Methods("POST")
+	// Rating Routes
+	r.HandleFunc("/point_count", users.Ratings.Create).Methods("POST")
 
 	http.Handle("/", r)
 	// HTTP Listening Port
