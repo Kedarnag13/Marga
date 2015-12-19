@@ -5,7 +5,7 @@ type User struct {
 	Name                  string  `valid:"alphanum,required"`
 	Username              string  `valid:"alphanum,required"`
 	Email                 string  `valid:"email"`
-	Mobile_number         int     `valid:"numeric,required"`
+	Mobile_number         string  `valid:"alphanum,required"`
 	Latitude              float64 `valid:latitude`
 	Longitude             float64 `valid:longitude`
 	Password              string  `valid:"alphanum,required"`
@@ -13,5 +13,22 @@ type User struct {
 	City                  string  `valid:"alphanum"`
 	Devise_token          string  `valid:"alphanum,required"`
 	Ward_id               int     `valid:"numeric"`
-	Type                  string  `valid:"duck"`
+	Type                  string  `valid:"string"`
+}
+
+type ErrorMessage struct {
+	Success string
+	Error   string
+}
+
+type SuccessfulSignIn struct {
+	Success string
+	Message string
+	User    User
+	Session SessionDetails
+}
+
+type SessionDetails struct {
+	SessionId   int
+	DeviseToken string
 }
