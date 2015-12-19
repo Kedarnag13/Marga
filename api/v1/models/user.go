@@ -16,11 +16,6 @@ type User struct {
 	Type                  string  `valid:"string"`
 }
 
-type ErrorMessage struct {
-	Success string
-	Error   string
-}
-
 type SuccessfulSignIn struct {
 	Success string
 	Message string
@@ -31,18 +26,6 @@ type SuccessfulSignIn struct {
 type SessionDetails struct {
 	SessionId   int
 	DeviseToken string
-}
-
-type SignIn struct {
-	Success string
-	Message string
-	User    User
-	Session Session
-}
-
-// Session struct [account/session]
-type Session struct {
-	SessionId int
 }
 
 // Message struct [controllers/account]

@@ -43,11 +43,11 @@ func (s sessionController) Create(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 		goto end
 	} else {
-		b, err := json.Marshal(models.SignIn{
+		b, err := json.Marshal(models.SuccessfulSignIn{
 			Success: "true",
 			Message: "Logged in Successfully",
 			User:    user,
-			Session: models.Session{user.Id},
+			Session: models.SessionDetails{user.Id, user.Devise_token},
 		})
 
 		if err != nil {
@@ -124,7 +124,6 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			return "Please enter credentials to log in", true, user
 		}
 	}
-	log.Println("Am here")
 	if user.Devise_token == "" {
 		return "Devise Token can't be empty", true, user
 	} else {
@@ -142,7 +141,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 				log.Fatal(err)
 			}
 			if logout == true {
-				user := models.User{0, "", "", "", "", 0.0, 0.0, "", "", "", user.Devise_token, 0, ""}
+				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, 0, ""}
 				return "Logged out Successfully", false, user
 			}
 		}
@@ -165,19 +164,19 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 				var longitude float64
 				var password string
 				var password_confirmation string
-				var city sql.NullString
+				var city string
 				var ward_id int
 				var devise_token string
 				var user_type string
 
-				err := get_user.Scan(&id, &name, &username, &email, &mobile_number, &latitude, &longitude, &password, &password_confirmation, &city, &ward_id, &devise_token, &user_type)
+				err := get_user.Scan(&id, &name, &username, &email, &mobile_number, &latitude, &longitude, &password, &password_confirmation, &city, &devise_token, &ward_id, &user_type)
 				if err != nil {
 					log.Fatal(err)
 				}
-				key := []byte("A WAY FOR MAKING BETTER MYSORE")
+				key := []byte("traveling is fun")
 				db_password := password
 				decrypt_password := controllers.Decrypt(key, db_password)
-				if email == user.Email && decrypt_password == user.Password {
+				if mobile_number == user.Mobile_number && decrypt_password == user.Password {
 					var devise string = "insert into devices(devise_token,user_id)values ($1,$2)"
 					dev, err := db.Prepare(devise)
 					if err != nil {
@@ -198,7 +197,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 					if err != nil || res == nil {
 						log.Fatal(err)
 					}
-					user_details := models.User{id, name, username, email, mobile_number, latitude, longitude, "", "", city.String, devise_token, ward_id, user_type}
+					user_details := models.User{id, name, username, email, mobile_number, latitude, longitude, "", "", city, devise_token, ward_id, user_type}
 					return "Logged in Successfully", false, user_details
 				}
 			}
