@@ -17,7 +17,7 @@ func main() {
 
 	// Issue Routes
 	r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
-	r.HandleFunc("/point_count", users.Ratings.Create).Methods("POST")
+	r.HandleFunc("/point_count", users.Ratings.MyPointCount).Methods("POST")
 
 	http.Handle("/", r)
 	// HTTP Listening Port

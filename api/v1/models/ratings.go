@@ -1,9 +1,8 @@
 package models
 
-type Mypoints struct{
-	SenderId int `valid:"numeric,required"`
+type Mypoints struct {
+	SenderId  int `valid:"numeric,required"`
 	ReciverId int `valid:"numeric,required"`
-	Points int `valid:numeric,required`
 }
 
 type ProfileErrorMessage struct {

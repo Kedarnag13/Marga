@@ -4,30 +4,29 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/kedarnag13/Marga/api/v1/controllers"
 	"github.com/asaskevich/govalidator"
+	"github.com/kedarnag13/Marga/api/v1/controllers"
 	"github.com/kedarnag13/Marga/api/v1/models"
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 type ratingsController struct{}
 
 var Ratings ratingsController
 
-func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Request){
+func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Request) {
 
-	var point Mypoints
+	var point models.Mypoints
 
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	err = json.Unmarshal(body, &u)
+	err = json.Unmarshal(body, &point)
 	if err != nil {
 		panic(err)
 	}
@@ -36,16 +35,15 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 	if err != nil || db == nil {
 		log.Fatal(err)
 	}
-
 	sender_existance := controllers.Check_for_user(point.SenderId)
 	sender_session_existance := controllers.Check_for_user_session(point.SenderId)
 	receiver_existance := controllers.Check_for_user(point.ReciverId)
 
-	 if sender_existance == false {
+	if sender_existance == false {
 		b, err := json.Marshal(models.ProfileErrorMessage{
 			Success: "false",
 			Error:   "User Does not exist",
-			})
+		})
 
 		if err != nil {
 			log.Fatal(err)
@@ -59,7 +57,7 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 		b, err := json.Marshal(models.ProfileErrorMessage{
 			Success: "false",
 			Error:   "Require Login",
-			})
+		})
 
 		if err != nil {
 			log.Fatal(err)
@@ -69,7 +67,7 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 		rw.Write(b)
 		goto end
 	}
-	if point.Sender_user_id == 0 ||  point.Receiver_user_id == 0 {
+	if point.SenderId == 0 || point.ReciverId == 0 {
 		result, err := govalidator.ValidateStruct(point)
 		if err != nil || result == false {
 			println("error: " + err.Error())
@@ -77,7 +75,7 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 		b, err := json.Marshal(models.ShowErrorMessage{
 			Success: "false",
 			Error:   err.Error(),
-			})
+		})
 
 		if err != nil {
 			log.Fatal(err)
@@ -89,7 +87,7 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 		b, err := json.Marshal(models.ShowErrorMessage{
 			Success: "false",
 			Error:   "The receiver does not exist",
-			})
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -98,35 +96,35 @@ func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Reques
 		goto end
 	} else {
 
-		fetch_point, err := db.Query("select my_points from users where id = $1",point.ReciverId)
+		fetch_point, err := db.Query("select coalesce(my_points, 0) from users where id = $1", point.ReciverId)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for fetch_point.Next() {
+			var existing_points int
+			err := fetch_point.Scan(&existing_points)
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			for fetch_point.Next(){
-				var existing_points int
-				err = fetch_point.Scan(&existing_points)
-				if err != nil {
-					log.Fatal(err)
-				}
-				new_points := existing_points + point.Points
-				update_point, err := db.Query("insert into users values my_points = $1 where id = $2 ", new_points, point.ReciverId)
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				b, err := json.Marshal(models.SuccessMessage{
-					Success: "false",
-					Message:   "You have rated successfully",
-				})
-
-				if err != nil {
-					log.Fatal(err)
-				}
-				rw.Header().Set("Content-Type", "application/json")
-				rw.Write(b)
-				fmt.Println("You have rated successfully")
+			new_points := existing_points + 1
+			update_point, err := db.Query("UPDATE users set my_points = $1 where id = $2", new_points, point.ReciverId)
+			if err != nil || update_point == nil {
+				log.Fatal(err)
 			}
+
+			b, err := json.Marshal(models.SuccessMessage{
+				Success: "true",
+				Message: "You have rated successfully",
+			})
+
+			if err != nil {
+				log.Fatal(err)
+			}
+			rw.Header().Set("Content-Type", "application/json")
+			rw.Write(b)
+			fmt.Println("You have rated successfully")
+		}
 	}
-	:end
+end:
 }
