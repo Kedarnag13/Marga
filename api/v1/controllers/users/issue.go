@@ -308,16 +308,12 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 				log.Fatal(err)
 			}
 			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, created_at}
+			resp1, resp2 := notifications.Send_notification()
 			b, err := json.Marshal(models.SuccessfulCreateIssue{
 				Success: "true",
 				Message: "Issue created Successfully!",
 				Issue:   issue,
 			})
-
-			if err != nil {
-				log.Fatal(err)
-			}
-
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
 			goto issue_end
