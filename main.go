@@ -20,6 +20,8 @@ func main() {
 	r.HandleFunc("/issues", users.Issue.Index).Methods("GET")
 	r.HandleFunc("/user/{id:[0-9]+}/issues", users.Issue.Index).Methods("GET")
 	r.HandleFunc("/issues/{type:[a-z]+}", users.Issue.Get_issues_on_type).Methods("GET")
+	// Ward Routes
+	r.HandleFunc("/wards", users.Issue.List_wards).Methods("GET")
 
 	// Rating Routes
 	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")

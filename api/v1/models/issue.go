@@ -46,3 +46,16 @@ type IssueList struct {
 	No_Of_Issues  int
 	Issue_Details []IssueDetails
 }
+
+type WardDetails struct {
+	Id           int
+	Name         string
+	Email        string
+	Devise_token string
+}
+
+type WardList struct {
+	Success      string
+	No_Of_Wards  int
+	Ward_Details []WardDetails
+}
