@@ -40,7 +40,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	var status bool
 	var address string
 	var user_id int
-	var no_of_users int
+	var no_of_issues int
 	for get_all_issues.Next() {
 		err := get_all_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 		if err != nil {
@@ -48,13 +48,13 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		}
 		issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
 		i.Issue_Details = append(i.Issue_Details, issue_det)
-		no_of_users++
+		no_of_issues++
 		flag = 0
 	}
 	if flag == 0 {
 		b, err := json.Marshal(models.IssueList{
 			Success:       "true",
-			No_Of_Users:   no_of_users,
+			No_Of_Issues:  no_of_issues,
 			Issue_Details: i.Issue_Details,
 		})
 		if err != nil {
@@ -80,14 +80,10 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 index_end:
 }
 
-type myissuesController struct{}
-
-var MyIssues myissuesController
-
-func (m myissuesController) My_issues(rw http.ResponseWriter, req *http.Request) {
+func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
 
 	var my_issues models.IssueList
-	var no_of_users int
+	var no_of_issues int
 
 	flag := 1
 
@@ -139,7 +135,7 @@ func (m myissuesController) My_issues(rw http.ResponseWriter, req *http.Request)
 			}
 			issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
 			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
-			no_of_users++
+			no_of_issues++
 			flag = 0
 		}
 	}
@@ -147,7 +143,7 @@ func (m myissuesController) My_issues(rw http.ResponseWriter, req *http.Request)
 	if flag == 0 {
 		b, err := json.Marshal(models.IssueList{
 			Success:       "true",
-			No_Of_Users:   no_of_users,
+			No_Of_Issues:  no_of_issues,
 			Issue_Details: my_issues.Issue_Details,
 		})
 		if err != nil {
@@ -171,6 +167,78 @@ func (m myissuesController) My_issues(rw http.ResponseWriter, req *http.Request)
 		rw.Write(b)
 	}
 my_issue_index_end:
+}
+
+func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Request) {
+
+	var my_issues models.IssueList
+	var no_of_issues int
+
+	flag := 1
+
+	vars := mux.Vars(req)
+	issue_type := vars["type"]
+
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	get_issues, err := db.Query("select name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if flag == 1 {
+		var name string
+		var issue_type string
+		var description string
+		var latitude float64
+		var longitude float64
+		var image string
+		var status bool
+		var address string
+		var user_id int
+		for get_issues.Next() {
+
+			err := get_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+			if err != nil {
+				log.Fatal(err)
+			}
+			issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
+			no_of_issues++
+			flag = 0
+		}
+	}
+
+	if flag == 0 {
+		b, err := json.Marshal(models.IssueList{
+			Success:       "true",
+			No_Of_Issues:  no_of_issues,
+			Issue_Details: my_issues.Issue_Details,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto issue_on_type
+	}
+	if flag == 1 {
+		b, err := json.Marshal(models.IssueErrorMessage{
+			Success: "false",
+			Error:   "No Issues",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+	}
+issue_on_type:
 }
 
 func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
