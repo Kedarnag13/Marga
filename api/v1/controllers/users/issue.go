@@ -15,12 +15,73 @@ type issueController struct{}
 
 var Issue issueController
 
+func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
+
+	var i models.IssueList
+
+	flag := 1
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil || db == nil {
+		log.Fatal(err)
+	}
+	get_all_issues, err := db.Query("SELECT name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
+	if err != nil || get_all_issues == nil {
+		log.Fatal(err)
+	}
+	var name string
+	var issue_type string
+	var description string
+	var latitude float64
+	var longitude float64
+	var image string
+	var status bool
+	var address string
+	var user_id int
+	var no_of_users int
+	for get_all_issues.Next() {
+		err := get_all_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+		i.Issue_Details = append(i.Issue_Details, issue_det)
+		no_of_users++
+		flag = 0
+	}
+	if flag == 0 {
+		b, err := json.Marshal(models.IssueList{
+			Success:       "true",
+			No_Of_Users:   no_of_users,
+			Issue_Details: i.Issue_Details,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto index_end
+	}
+	if flag == 1 {
+		b, err := json.Marshal(models.IssueErrorMessage{
+			Success: "false",
+			Error:   "No Issues",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+	}
+index_end:
+}
+
 func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 
 	var i models.Issue
 
 	flag := 1
-
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)
