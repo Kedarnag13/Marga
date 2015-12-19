@@ -13,7 +13,24 @@ type User struct {
 	City                  string  `valid:"alphanum"`
 	Devise_token          string  `valid:"alphanum,required"`
 	Ward_id               int     `valid:"numeric"`
-	Type                  string  `valid:"duck"`
+	Type                  string  `valid:"string"`
+}
+
+type ErrorMessage struct {
+	Success string
+	Error   string
+}
+
+type SuccessfulSignIn struct {
+	Success string
+	Message string
+	User    User
+	Session SessionDetails
+}
+
+type SessionDetails struct {
+	SessionId   int
+	DeviseToken string
 }
 
 type SignIn struct {
