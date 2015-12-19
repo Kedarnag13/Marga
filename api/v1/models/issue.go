@@ -10,4 +10,5 @@ type Issue struct {
 	Image       string  `valid:"alphanum,required"`
 	Status      bool    `valid:"required"`
 	Address     string  `valid:"duck,required"`
+	User_id     int     `valid:"numeric,required"`
 }
