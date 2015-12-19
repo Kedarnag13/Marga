@@ -9,4 +9,5 @@ type Issue struct {
 	Longitude   float64 `valid:longitude,required`
 	Image       string  `valid:"alphanum,required"`
 	Status      bool    `valid:"required"`
+	Address     string  `valid:"duck,required"`
 }
