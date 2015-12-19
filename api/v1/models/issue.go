@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type Issue struct {
 	Id          int     `valid:"numeric"`
 	Name        string  `valid:"duck,required"`
@@ -11,6 +15,7 @@ type Issue struct {
 	Status      bool    `valid:"required"`
 	Address     string  `valid:"duck,required"`
 	User_id     int     `valid:"numeric,required"`
+	Created_at  time.Time
 }
 
 type IssueDetails struct {

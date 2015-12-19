@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"github.com/kedarnag13/Marga/api/v1/controllers"
@@ -12,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type issueController struct{}
@@ -291,16 +293,21 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 				log.Fatal(err)
 			}
 			id = id + 1
-			var insert_issue string = "insert into issues (id, name, type, description, latitude, longitude, image, status, address, user_id) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)"
+
+			created_at := time.Now()
+			if err != nil {
+				log.Fatal(err)
+			}
+			var insert_issue string = "insert into issues (id, name, type, description, latitude, longitude, image, status, address, user_id, created_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)"
 			prepare_insert_issue, err := db.Prepare(insert_issue)
 			if err != nil || prepare_insert_issue == nil {
 				log.Fatal(err)
 			}
-			issue_res, err := prepare_insert_issue.Exec(id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id)
+			issue_res, err := prepare_insert_issue.Exec(id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, created_at)
 			if err != nil || issue_res == nil {
 				log.Fatal(err)
 			}
-			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id}
+			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, created_at}
 			b, err := json.Marshal(models.SuccessfulCreateIssue{
 				Success: "true",
 				Message: "Issue created Successfully!",
