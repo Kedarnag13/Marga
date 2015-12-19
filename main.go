@@ -22,7 +22,7 @@ func main() {
 	r.HandleFunc("/issues/{type:[a-z]+}", users.Issue.Get_issues_on_type).Methods("GET")
 
 	// Rating Routes
-	r.HandleFunc("/point_count", users.Ratings.Create).Methods("POST")
+	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")
 
 	http.Handle("/", r)
 	// HTTP Listening Port
