@@ -21,6 +21,9 @@ func main() {
 	r.HandleFunc("/user/{id:[0-9]+}/issues", users.Issue.Index).Methods("GET")
 	r.HandleFunc("/issues/{type:[a-z]+}", users.Issue.Get_issues_on_type).Methods("GET")
 
+	//Comment
+	r.HandleFunc("/create_comment", users.Comment.Create).Methods("POST")
+
 	// Rating Routes
 	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")
 

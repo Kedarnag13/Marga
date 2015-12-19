@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"github.com/kedarnag13/Marga/api/v1/controllers"
