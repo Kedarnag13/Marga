@@ -18,7 +18,7 @@ type ratingsController struct{}
 
 var Ratings ratingsController
 
-func (r ratingsController) MyPionts(rw http.ResponseWriter, req *http.Request){
+func (r ratingsController) MyPointCount(rw http.ResponseWriter, req *http.Request){
 
 	var point Mypoints
 
@@ -110,7 +110,7 @@ func (r ratingsController) MyPionts(rw http.ResponseWriter, req *http.Request){
 					log.Fatal(err)
 				}
 				new_points := existing_points + point.Points
-				update_point, err := db.Query("insert into user (my_points) values ($1) where id = $2 ", new_points, point.ReciverId)
+				update_point, err := db.Query("insert into users values my_points = $1 where id = $2 ", new_points, point.ReciverId)
 				if err != nil {
 					log.Fatal(err)
 				}

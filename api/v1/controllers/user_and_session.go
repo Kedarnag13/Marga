@@ -1,10 +1,10 @@
 package controllers
 
 import (
-"database/sql"
-"fmt"
-_ "github.com/lib/pq"
-"log"
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+	"log"
 )
 
 func Check_for_user(user_id int) bool {
@@ -12,7 +12,7 @@ func Check_for_user(user_id int) bool {
 	if err != nil {
 		log.Fatal(err)
 	}
-	user_ids, err := db.Query("SELECT id FROM users where id = $1",user_id)
+	user_ids, err := db.Query("SELECT id FROM users where id = $1", user_id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,11 +38,11 @@ func Check_for_user(user_id int) bool {
 }
 
 func Check_for_user_session(user_id int) bool {
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=postgres sslmode=disable")
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
-	session_user_ids, err := db.Query("SELECT user_id FROM sessions where user_id = $1",user_id)
+	session_user_ids, err := db.Query("SELECT user_id FROM sessions where user_id = $1", user_id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -66,3 +66,4 @@ func Check_for_user_session(user_id int) bool {
 		return false
 	}
 }
+
