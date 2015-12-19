@@ -17,6 +17,7 @@ func main() {
 
 	// Issue Routes
 	r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
+	r.HandleFunc("/issues", users.Issue.Index).Methods("GET")
 
 	http.Handle("/", r)
 	// HTTP Listening Port
