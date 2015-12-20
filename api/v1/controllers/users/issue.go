@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	"github.com/kedarnag13/Marga/api/v1/controllers"
@@ -331,4 +330,60 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 issue_end:
+}
+
+func (ic issueController) List_wards(rw http.ResponseWriter, req *http.Request) {
+
+	var ward models.WardList
+	flag := 1
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil || db == nil {
+		log.Fatal(err)
+	}
+	get_wards, err := db.Query("SELECT id, name, email, devise_token  FROM wards")
+	if err != nil || get_wards == nil {
+		log.Fatal(err)
+	}
+	var no_of_wards int
+	for get_wards.Next() {
+		var id int
+		var name string
+		var email string
+		var devise_token string
+		err = get_wards.Scan(&id, &name, &email, &devise_token)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ward_det := models.WardDetails{id, name, email, devise_token}
+		ward.Ward_Details = append(ward.Ward_Details, ward_det)
+		no_of_wards++
+		flag = 0
+	}
+	if flag == 0 {
+		b, err := json.Marshal(models.WardList{
+			Success:      "true",
+			No_Of_Wards:  no_of_wards,
+			Ward_Details: ward.Ward_Details,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto ward_issue_end
+	}
+	if flag == 1 {
+		b, err := json.Marshal(models.IssueErrorMessage{
+			Success: "false",
+			Error:   "No Wards",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+	}
+ward_issue_end:
 }
