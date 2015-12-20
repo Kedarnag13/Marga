@@ -3,8 +3,8 @@ package controllers
 import (
 	"database/sql"
 	"fmt"
-	"github.com/Qwinix/rVidi-Go/api/v1/controllers"
 	"github.com/anachronistic/apns"
+	"github.com/kedarnag13/Marga/api/v1/controllers"
 	_ "github.com/lib/pq"
 	"log"
 )
