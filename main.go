@@ -23,6 +23,9 @@ func main() {
 	// Ward Routes
 	r.HandleFunc("/wards", users.Issue.List_wards).Methods("GET")
 
+	//Comment
+	r.HandleFunc("/create_comment", users.Comment.Create).Methods("POST")
+
 	// Rating Routes
 	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")
 
