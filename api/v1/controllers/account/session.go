@@ -3,9 +3,9 @@ package account
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/Kedarnag13/Marga/api/v1/controllers"
+	"github.com/Kedarnag13/Marga/api/v1/models"
 	"github.com/gorilla/mux"
-	"github.com/kedarnag13/Marga/api/v1/controllers"
-	"github.com/kedarnag13/Marga/api/v1/models"
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"log"

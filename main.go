@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/Kedarnag13/Marga/api/v1/controllers/account"
+	"github.com/Kedarnag13/Marga/api/v1/controllers/users"
 	"github.com/gorilla/mux"
-	"github.com/kedarnag13/Marga/api/v1/controllers/account"
-	"github.com/kedarnag13/Marga/api/v1/controllers/users"
 	"log"
 	"net/http"
 )

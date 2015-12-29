@@ -3,7 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/kedarnag13/Marga/api/v1/models"
+	"github.com/Kedarnag13/Marga/api/v1/models"
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"log"
