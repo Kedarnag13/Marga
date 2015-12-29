@@ -10,3 +10,7 @@ type SuccessCommentMessage struct {
 	Success string
 	Message string
 }
+
+type CommentList struct {
+	Issue_id int `valid:"alpha"`
+}

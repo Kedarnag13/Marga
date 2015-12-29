@@ -20,6 +20,7 @@ type Issue struct {
 }
 
 type IssueDetails struct {
+	Issue_id    int     `valid:"numeric"`
 	Name        string  `valid:"duck,required"`
 	Type        string  `valid:"alpha"`
 	Description string  `valid:"duck,required"`

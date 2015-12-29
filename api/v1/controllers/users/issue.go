@@ -28,10 +28,11 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	if err != nil || db == nil {
 		log.Fatal(err)
 	}
-	get_all_issues, err := db.Query("SELECT name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
+	get_all_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
 	if err != nil || get_all_issues == nil {
 		log.Fatal(err)
 	}
+	var issue_id int
 	var name string
 	var issue_type string
 	var description string
@@ -43,11 +44,11 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	var user_id int
 	var no_of_issues int
 	for get_all_issues.Next() {
-		err := get_all_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+		err := get_all_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 		if err != nil {
 			log.Fatal(err)
 		}
-		issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+		issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 		i.Issue_Details = append(i.Issue_Details, issue_det)
 		no_of_issues++
 		flag = 0
@@ -185,12 +186,13 @@ func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Re
 		log.Fatal(err)
 	}
 
-	get_issues, err := db.Query("select name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
+	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if flag == 1 {
+		var issue_id int
 		var name string
 		var issue_type string
 		var description string
@@ -202,11 +204,11 @@ func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Re
 		var user_id int
 		for get_issues.Next() {
 
-			err := get_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+			err := get_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 			if err != nil {
 				log.Fatal(err)
 			}
-			issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+			issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
 			no_of_issues++
 			flag = 0
