@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
+	"github.com/Kedarnag13/Marga/api/v1/controllers/notifications"
 	"github.com/Kedarnag13/Marga/api/v1/models"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
@@ -98,7 +99,7 @@ func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	get_issues, err := db.Query("select name, type, description, latitude, longitude, image, status, address, user_id from issues where id = $1 ", issue_id)
+	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where id = $1 ", issue_id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -120,6 +121,7 @@ func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	if flag == 0 {
+		var issue_id int
 		var name string
 		var issue_type string
 		var description string
@@ -131,11 +133,11 @@ func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
 		var user_id int
 		for get_issues.Next() {
 
-			err := get_issues.Scan(&name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+			err := get_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 			if err != nil {
 				log.Fatal(err)
 			}
-			issue_det := models.IssueDetails{name, issue_type, description, latitude, longitude, image, status, address, user_id}
+			issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
 			no_of_issues++
 			flag = 0
@@ -309,7 +311,7 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 				log.Fatal(err)
 			}
 			issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, i.Corporator_id, created_at}
-			resp1, resp2 := controllers.Send_notification(i.User_id, i.Corporator_id, "A new complaint has been reported!")
+			resp1, resp2 := notifications.Send_notification(i.User_id, i.Corporator_id, "A new complaint has been reported!")
 			if resp1 == "true" {
 				b, err := json.Marshal(models.NotificationSuccess{
 					Success: "true",

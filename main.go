@@ -25,6 +25,7 @@ func main() {
 
 	//Comment
 	r.HandleFunc("/create_comment", users.Comment.Create).Methods("POST")
+	r.HandleFunc("/comment/issues/{id:[0-9]+}", users.Comment.Index).Methods("GET")
 
 	// Rating Routes
 	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")
