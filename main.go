@@ -18,7 +18,7 @@ func main() {
 	// Issue Routes
 	r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
 	r.HandleFunc("/issues", users.Issue.Index).Methods("GET")
-	r.HandleFunc("/user/{id:[0-9]+}/issues", users.Issue.Index).Methods("GET")
+	r.HandleFunc("/user/{id:[0-9]+}/issues/{id:[0-9]+}", users.Issue.Index).Methods("GET")
 	r.HandleFunc("/issues/{type:[a-z]+}", users.Issue.Get_issues_on_type).Methods("GET")
 	// Ward Routes
 	r.HandleFunc("/wards", users.Issue.List_wards).Methods("GET")
