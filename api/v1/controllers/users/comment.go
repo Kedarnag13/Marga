@@ -3,6 +3,7 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/Kedarnag13/Marga/api/v1/models"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -46,14 +47,17 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		var insert_comment string = "insert into comments(user_id,issue_id,description) values ($1,$2,$3)"
-		prepare_comments, err := db.Prepare(insert_comment)
-		if err != nil {
-			log.Fatal(err)
-		}
-		res, err := prepare_comments.Exec(c.User_id, c.Issue_id, c.Description)
-		if err != nil || res == nil {
-			log.Fatal(err)
+		if issue_id == c.Issue_id {
+			fmt.Println("inside issue")
+			var insert_comment string = "insert into comments(user_id,issue_id,description) values ($1,$2,$3)"
+			prepare_comments, err := db.Prepare(insert_comment)
+			if err != nil {
+				log.Fatal(err)
+			}
+			res, err := prepare_comments.Exec(c.User_id, c.Issue_id, c.Description)
+			if err != nil || res == nil {
+				log.Fatal(err)
+			}
 		}
 	}
 	if flag == 0 {
