@@ -55,7 +55,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println("inside prepare:", c.User_id)
+			fmt.Println("inside prepare:", c.User_id, c.Issue_id, c.Description)
 			res, err := prepare_comments.Exec(c.User_id, c.Issue_id, c.Description)
 			if err != nil || res == nil {
 				log.Fatal(err)
