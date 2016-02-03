@@ -91,19 +91,19 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 	vars := mux.Vars(req)
 	id := vars["id"]
-	issue_id, err := strconv.Atoi(id)
+	user_id, err := strconv.Atoi(id)
 
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", issue_id)
+	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", user_id)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	user_session_existance := controllers.Check_for_user_session(issue_id)
+	user_session_existance := controllers.Check_for_user_session(user_id)
 	if user_session_existance == false {
 		b, err := json.Marshal(models.ProfileErrorMessage{
 			Success: "false",
@@ -143,7 +143,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if flag == 0 {
+	if flag == 0 && no_of_issues > 0 {
 		b, err := json.Marshal(models.IssueList{
 			Success:       "true",
 			No_Of_Issues:  no_of_issues,
@@ -156,8 +156,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
 		goto my_issue_index_end
-	}
-	if flag == 1 {
+	} else {
 		b, err := json.Marshal(models.IssueErrorMessage{
 			Success: "false",
 			Error:   "No Issues",
