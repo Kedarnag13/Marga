@@ -82,12 +82,12 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 index_end:
 }
 
-func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
+func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 	var my_issues models.IssueList
 	var no_of_issues int
 
-	flag := 1
+	flag := 0
 
 	vars := mux.Vars(req)
 	id := vars["id"]
@@ -98,7 +98,7 @@ func (m issueController) My_issues(rw http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where id = $1 ", issue_id)
+	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", issue_id)
 	if err != nil {
 		log.Fatal(err)
 	}
