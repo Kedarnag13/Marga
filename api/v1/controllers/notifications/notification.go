@@ -47,7 +47,7 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 			pn.Set("Sender_id", senderid)
 			pn.Set("Reciever_id", recieverid)
 
-			client := apns.NewClient("gateway.push.apple.com:2195", "actualcrtAPNS.pem", "actualkeyAPNS.pem")
+			client := apns.NewClient("gateway.push.apple.com:2195", "APNS_crt.pem", "APNS_key.pem")
 			resp := client.Send(pn)
 
 			alert, _ := pn.PayloadString()
