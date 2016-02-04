@@ -33,6 +33,9 @@ func main() {
 	// Rating Routes
 	r.HandleFunc("/user_points", users.Ratings.Create).Methods("POST")
 
+	//Send forgot password message
+	r.HandleFunc("/forgot_password", account.ForgotPassword.SendPassword).Methods("POST")
+
 	http.Handle("/", r)
 	// HTTP Listening Port
 	log.Println("main : Started : Listening on: http://localhost:3000 ...")

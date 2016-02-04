@@ -8,8 +8,8 @@ type User struct {
 	Mobile_number         string  `valid:"alphanum,required"`
 	Latitude              float64 `valid:latitude`
 	Longitude             float64 `valid:longitude`
-	Password              string  `valid:"alphanum,required"`
-	Password_confirmation string  `valid:"alphanum,required"`
+	Password              string  `valid:"duck,required"`
+	Password_confirmation string  `valid:"duck,required"`
 	City                  string  `valid:"alphanum"`
 	Devise_token          string  `valid:"alphanum,required"`
 	Ward_id               int     `valid:"numeric"`
