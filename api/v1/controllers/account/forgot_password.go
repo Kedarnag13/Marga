@@ -120,3 +120,64 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 	}
 end:
 }
+
+func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *http.Request) {
+
+	var u models.ResetPassword
+	body, err := ioutil.ReadAll(req.Body)
+	err = json.Unmarshal(body, &u)
+	if err != nil {
+		panic(err)
+	}
+
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	get_password, err := db.Query("SELECT password FROM users where id = $1", u.User_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for get_password.Next() {
+		var old_password string
+		err = get_password.Scan(&old_password)
+		key := []byte("traveling is fun")
+		db_password := old_password
+		decrypt_password := controllers.Decrypt(key, db_password)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if decrypt_password == u.OldPassword {
+			update_pawssword, err := db.Query("UPDATE users set password = $1 where id = $2", u.NewPassword, u.User_id)
+			if err != nil || update_pawssword == nil {
+				log.Fatal(err)
+			}
+			fmt.Println("New password updated successfully")
+			b, err := json.Marshal(models.SuccessMessage{
+				Success: "true",
+				Message: "New password updated successfully",
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			rw.Header().Set("Content-Type", "application/json")
+			rw.Write(b)
+			goto reset_password_end
+		} else {
+			fmt.Println("Password reset failed")
+			b, err := json.Marshal(models.ErrorMessage{
+				Success: "false",
+				Error:   "Password reset failed",
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			rw.Header().Set("Content-Type", "application/json")
+			rw.Write(b)
+			goto reset_password_end
+		}
+	}
+	defer get_password.Close()
+reset_password_end:
+}

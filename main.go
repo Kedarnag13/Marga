@@ -35,6 +35,8 @@ func main() {
 
 	//Send forgot password message
 	r.HandleFunc("/forgot_password", account.ForgotPassword.SendPassword).Methods("POST")
+	//Reset Password
+	r.HandleFunc("/reset_password", account.ForgotPassword.ResetPassword).Methods("POST")
 
 	http.Handle("/", r)
 	// HTTP Listening Port
