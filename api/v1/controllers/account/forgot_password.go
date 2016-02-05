@@ -85,12 +85,24 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		}
 
 		key := []byte("traveling is fun")
-		db_password := string(b)
-		decrypt_password := controllers.Decrypt(key, db_password)
-		update_pawssword, err := db.Query("UPDATE users set password = $1 where mobile_number = $2", decrypt_password, u.MobileNumber)
+		db_password := []byte(string(b))
+		encrypt_password := controllers.Encrypt(key, db_password)
+		update_pawssword, err := db.Query("UPDATE users set password = $1 where mobile_number = $2", encrypt_password, u.MobileNumber)
 		if err != nil || update_pawssword == nil {
 			log.Fatal(err)
 		}
+		fmt.Println("Temporary Password sent successfully")
+		b, err := json.Marshal(models.SuccessMessage{
+			Success: "true",
+			Message: "Temporary Password sent successfully",
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		flag = 0
+		goto end
 	} else {
 		fmt.Println("User does not exist")
 		b, err := json.Marshal(models.ErrorMessage{
