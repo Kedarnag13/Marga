@@ -53,6 +53,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		no_of_issues++
 		flag = 0
 	}
+	defer get_all_issues.Close()
 	if flag == 0 {
 		b, err := json.Marshal(models.IssueList{
 			Success:       "true",

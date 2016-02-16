@@ -29,6 +29,7 @@ func Check_for_user(user_id int) bool {
 		}
 	}
 	defer user_ids.Close()
+	db.Close()
 	if flag == 0 {
 		return true
 	} else {
@@ -59,6 +60,7 @@ func Check_for_user_session(user_id int) bool {
 		}
 	}
 	defer session_user_ids.Close()
+	db.Close()
 	if flag == 0 {
 		return true
 	} else {
