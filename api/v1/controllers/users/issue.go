@@ -81,6 +81,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 index_end:
+db.Close()
 }
 
 func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
@@ -171,6 +172,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 my_issue_index_end:
+db.Close()
 }
 
 func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Request) {
