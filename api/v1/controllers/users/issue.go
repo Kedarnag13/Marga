@@ -143,6 +143,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			flag = 0
 		}
 	}
+	defer get_issues.Close()
 
 	if flag == 0 && no_of_issues > 0 {
 		b, err := json.Marshal(models.IssueList{
@@ -215,6 +216,7 @@ func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Re
 			flag = 0
 		}
 	}
+	defer get_issues.Close()
 
 	if flag == 0 {
 		b, err := json.Marshal(models.IssueList{
