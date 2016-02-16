@@ -173,6 +173,8 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 				log.Fatal(err)
 			}
 
+			defer prepare_insert_user.Close()
+
 			var devise string = "insert into devices(devise_token,user_id)values ($1,$2)"
 			dev, err := db.Prepare(devise)
 			if err != nil {

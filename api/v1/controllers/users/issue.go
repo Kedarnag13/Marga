@@ -245,6 +245,7 @@ func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Re
 		rw.Write(b)
 	}
 issue_on_type:
+db.Close()
 }
 
 func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
@@ -335,6 +336,7 @@ func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 issue_end:
+db.Close()
 }
 
 func (ic issueController) List_wards(rw http.ResponseWriter, req *http.Request) {
@@ -391,4 +393,5 @@ func (ic issueController) List_wards(rw http.ResponseWriter, req *http.Request) 
 		rw.Write(b)
 	}
 ward_issue_end:
+db.Close()
 }
