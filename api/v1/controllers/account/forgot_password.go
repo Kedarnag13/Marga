@@ -79,7 +79,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		s, resp, err := c.Messages.Send(From, To, params)
 		if err != nil {
 			fmt.Println("Error in twilio")
-			log.Fatal(err)
+			log(err)
 		} else {
 			fmt.Println("From :", s)
 			fmt.Println("Response :", resp)
