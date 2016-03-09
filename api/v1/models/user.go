@@ -40,3 +40,8 @@ type ErrorMessage struct {
 	Success string
 	Error   string
 }
+
+type LogErrorMessage struct {
+	Success string
+	Error   error
+}

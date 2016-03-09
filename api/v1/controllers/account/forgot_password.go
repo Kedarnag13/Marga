@@ -1,19 +1,19 @@
 package account
 
 import (
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"github.com/Kedarnag13/Marga/api/v1/controllers"
-	"github.com/Kedarnag13/Marga/api/v1/models"
-	_ "github.com/lib/pq"
-	"github.com/subosito/twilio"
-	"io/ioutil"
-	"log"
-	"math/rand"
-	"net/http"
-	"strconv"
-	"strings"
+"database/sql"
+"encoding/json"
+"fmt"
+"github.com/Kedarnag13/Marga/api/v1/controllers"
+"github.com/Kedarnag13/Marga/api/v1/models"
+_ "github.com/lib/pq"
+"github.com/subosito/twilio"
+"io/ioutil"
+"log"
+"math/rand"
+"net/http"
+"strconv"
+"strings"
 )
 
 type forgotpasswordController struct{}
@@ -49,7 +49,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		AuthToken  = "43fae8d7421e2b52556f4e69f8087cf4"
 		From       = "+13052406907"
 		To         = mobile_number
-	)
+		)
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
@@ -78,8 +78,20 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		}
 		s, resp, err := c.Messages.Send(From, To, params)
 		if err != nil {
-			fmt.Println("Error in twilio")
-			panic(err)
+			
+			b, err := json.Marshal(models.LogErrorMessage{
+				Success: "false",
+				Error:   err,
+				})
+			if err != nil {
+				log.Fatal(err)
+			}
+			rw.Header().Set("Content-Type", "application/json")
+			rw.Write(b)
+			fmt.Println("Mobile number already exist")
+			flag = 0
+			goto end
+
 		} else {
 			fmt.Println("From :", s)
 			fmt.Println("Response :", resp)
@@ -96,7 +108,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		b, err := json.Marshal(models.SuccessMessage{
 			Success: "true",
 			Message: "Temporary Password sent successfully",
-		})
+			})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -109,7 +121,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   "User does not exist",
-		})
+			})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -119,7 +131,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		flag = 0
 		goto end
 	}
-end:
+	end:
 }
 
 func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *http.Request) {
@@ -158,7 +170,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 			b, err := json.Marshal(models.SuccessMessage{
 				Success: "true",
 				Message: "New password updated successfully",
-			})
+				})
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -170,7 +182,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 			b, err := json.Marshal(models.ErrorMessage{
 				Success: "false",
 				Error:   "Password reset failed",
-			})
+				})
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -180,5 +192,5 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 		}
 	}
 	defer get_password.Close()
-reset_password_end:
+	reset_password_end:
 }
