@@ -152,7 +152,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			}
 			id = id + 1
 
-			var insert_user string = "insert into users (id, name, username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, ward_id, type) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)"
+			var insert_user string = "insert into users (id, name, username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)"
 			db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 			if err != nil {
 				log.Fatal(err)
@@ -168,7 +168,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			encrypt_password := controllers.Encrypt(key, password)
 			encrypt_password_confirmation := controllers.Encrypt(key, confirm_password)
 
-			user_res, err := prepare_insert_user.Exec(id, u.Name, u.Username, u.Email, u.Mobile_number, u.Latitude, u.Longitude, encrypt_password, encrypt_password_confirmation, u.City, u.Devise_token, u.Ward_id, u.Type)
+			user_res, err := prepare_insert_user.Exec(id, u.Name, u.Username, u.Email, u.Mobile_number, u.Latitude, u.Longitude, encrypt_password, encrypt_password_confirmation, u.City, u.Devise_token, u.Type)
 			if err != nil || user_res == nil {
 				log.Fatal(err)
 			}
@@ -195,7 +195,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			}
 			fmt.Println("User created Successfully!")
 
-			user := models.User{id, u.Name, u.Username, u.Email, u.Mobile_number, u.Latitude, u.Longitude, u.Password, u.Password_confirmation, u.City, u.Devise_token, u.Ward_id, u.Type}
+			user := models.User{id, u.Name, u.Username, u.Email, u.Mobile_number, u.Latitude, u.Longitude, u.Password, u.Password_confirmation, u.City, u.Devise_token, u.Type}
 
 			b, err := json.Marshal(models.SuccessfulSignIn{
 				Success: "true",

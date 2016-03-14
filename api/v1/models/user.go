@@ -12,7 +12,6 @@ type User struct {
 	Password_confirmation string  `valid:"duck,required"`
 	City                  string  `valid:"alphanum"`
 	Devise_token          string  `valid:"alphanum,required"`
-	Ward_id               int     `valid:"numeric"`
 	Type                  string  `valid:"string"`
 }
 

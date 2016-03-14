@@ -141,7 +141,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 				log.Fatal(err)
 			}
 			if logout == true {
-				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, 0, ""}
+				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, ""}
 				return "Logged out Successfully", false, user
 			}
 		}
@@ -150,7 +150,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			return "Session does not exist", true, user
 		}
 		if login == true {
-			get_user, err := db.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, ward_id, type FROM users WHERE mobile_number=$1", user.Mobile_number)
+			get_user, err := db.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type FROM users WHERE mobile_number=$1", user.Mobile_number)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -165,11 +165,10 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 				var password string
 				var password_confirmation string
 				var city string
-				var ward_id int
 				var devise_token string
 				var user_type string
 
-				err := get_user.Scan(&id, &name, &username, &email, &mobile_number, &latitude, &longitude, &password, &password_confirmation, &city, &devise_token, &ward_id, &user_type)
+				err := get_user.Scan(&id, &name, &username, &email, &mobile_number, &latitude, &longitude, &password, &password_confirmation, &city, &devise_token, &user_type)
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -197,7 +196,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 					if err != nil || res == nil {
 						log.Fatal(err)
 					}
-					user_details := models.User{id, name, username, email, mobile_number, latitude, longitude, "", "", city, devise_token, ward_id, user_type}
+					user_details := models.User{id, name, username, email, mobile_number, latitude, longitude, "", "", city, devise_token, user_type}
 					return "Logged in Successfully", false, user_details
 				}
 			}
