@@ -1,18 +1,18 @@
 package account
 
 import (
-	"database/sql"
-	"encoding/json"
-	"fmt"
-	"github.com/Kedarnag13/Marga/api/v1/controllers"
-	"github.com/Kedarnag13/Marga/api/v1/models"
-	"github.com/asaskevich/govalidator"
-	_ "github.com/lib/pq"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"os"
-	"regexp"
+"database/sql"
+"encoding/json"
+"fmt"
+"github.com/Kedarnag13/Marga/api/v1/controllers"
+"github.com/Kedarnag13/Marga/api/v1/models"
+"github.com/asaskevich/govalidator"
+_ "github.com/lib/pq"
+"io/ioutil"
+"log"
+"net/http"
+"os"
+"regexp"
 )
 
 type registrationController struct{}
@@ -58,19 +58,19 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			result, err := govalidator.ValidateStruct(u)
 			if err != nil {
 				println("error: " + err.Error())
+				b, err := json.Marshal(models.ErrorMessage{
+					Success: "false",
+					Error:   err.Error(),
+					})
+				if err != nil {
+					log.Fatal(err)
+				}
+				rw.Header().Set("Content-Type", "application/json")
+				rw.Write(b)
+				goto create_user_end
 			}
 			fmt.Println(result)
 			flag = 0
-			b, err := json.Marshal(models.ErrorMessage{
-				Success: "false",
-				Error:   err.Error(),
-			})
-			if err != nil {
-				log.Fatal(err)
-			}
-			rw.Header().Set("Content-Type", "application/json")
-			rw.Write(b)
-			goto create_user_end
 		}
 	}
 
@@ -86,7 +86,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 				b, err := json.Marshal(models.ErrorMessage{
 					Success: "false",
 					Error:   "Mobile number already exist",
-				})
+					})
 				if err != nil {
 					log.Fatal(err)
 				}
@@ -104,7 +104,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   "Password and Password_confirmation do not match",
-		})
+			})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -129,7 +129,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 				b, err := json.Marshal(models.ErrorMessage{
 					Success: "false",
 					Error:   "Session already Exist",
-				})
+					})
 
 				if err != nil {
 					log.Fatal(err)
@@ -202,7 +202,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 				Message: "User created Successfully!",
 				User:    user,
 				Session: models.SessionDetails{id, u.Devise_token},
-			})
+				})
 
 			if err != nil {
 				log.Fatal(err)
@@ -214,6 +214,6 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 		}
 		defer fetch_id.Close()
 	}
-create_user_end:
+	create_user_end:
 	db.Close()
 }
