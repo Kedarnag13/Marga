@@ -418,10 +418,9 @@ func (is issueController) Cluster(rw http.ResponseWriter, req *http.Request) {
 	if err != nil || db == nil {
 		log.Fatal(err)
 	}
-	var arr [100]int
-	copy(arr[:], u.Issues)
 
-	get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id in ($1::[]int)",arr)
+
+	get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = ANY($1::[]int)",u.Issues)
 	if err != nil || get_cluster_issues == nil {
 		log.Fatal(err)
 	}
