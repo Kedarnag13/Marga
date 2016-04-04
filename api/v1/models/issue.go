@@ -80,5 +80,5 @@ type NotificationError struct {
 }
 
 type ClusterIssues struct {
-	Issues []int{}
+	Issues []int
 }

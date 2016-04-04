@@ -419,7 +419,7 @@ func (is issueController) Cluster(rw http.ResponseWriter, req *http.Request) {
 		log.Fatal(err)
 	}
 
-	get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id in ($1)",u.Issues)
+	get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id in ($1::[]int)",u.Issues)
 	if err != nil || get_cluster_issues == nil {
 		log.Fatal(err)
 	}
