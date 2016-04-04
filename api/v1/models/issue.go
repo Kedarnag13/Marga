@@ -78,3 +78,7 @@ type NotificationError struct {
 	Success string
 	Error   string
 }
+
+type ClusterIssues struct {
+	Issues []int
+}

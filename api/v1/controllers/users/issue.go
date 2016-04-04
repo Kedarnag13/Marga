@@ -397,3 +397,81 @@ func (ic issueController) List_wards(rw http.ResponseWriter, req *http.Request) 
 ward_issue_end:
 db.Close()
 }
+
+
+func (is issueController) Cluster(rw http.ResponseWriter, req *http.Request) {
+
+	var u models.ClusterIssues
+	var i models.IssueList
+
+	flag := 1
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		panic(err)
+	}
+	err = json.Unmarshal(body, &u)
+	if err != nil {
+		panic(err)
+	}
+	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil || db == nil {
+		log.Fatal(err)
+	}
+
+	get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id in ($1)",u.Issues)
+	if err != nil || get_cluster_issues == nil {
+		log.Fatal(err)
+	}
+	defer get_cluster_issues.Close()
+
+	var issue_id int
+	var name string
+	var issue_type string
+	var description string
+	var latitude float64
+	var longitude float64
+	var image string
+	var status bool
+	var address string
+	var user_id int
+	var no_of_issues int
+	for get_cluster_issues.Next() {
+		err := get_cluster_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
+		i.Issue_Details = append(i.Issue_Details, issue_det)
+		no_of_issues++
+		flag = 0
+	}
+	if flag == 0 {
+		b, err := json.Marshal(models.IssueList{
+			Success:       "true",
+			No_Of_Issues:  no_of_issues,
+			Issue_Details: i.Issue_Details,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+		goto cluster_end
+	}
+	if flag == 1 {
+		b, err := json.Marshal(models.IssueErrorMessage{
+			Success: "false",
+			Error:   "No Issues",
+		})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		rw.Header().Set("Content-Type", "application/json")
+		rw.Write(b)
+	}
+	cluster_end:
+	db.Close()
+}
