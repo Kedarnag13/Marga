@@ -23,6 +23,9 @@ func main() {
 	// List My Issues
 	r.HandleFunc("/user/{id:[0-9]+}/issues", users.Issue.MyIssues).Methods("GET")
 
+	// List Issues in Cluster
+	r.HandleFunc("/cluster/issues", users.Issue.Cluster).Methods("POST")
+
 	// Ward Routes
 	r.HandleFunc("/wards", users.Issue.List_wards).Methods("GET")
 
