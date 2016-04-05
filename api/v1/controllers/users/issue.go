@@ -13,7 +13,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	"github.com/jmoiron/sqlx"
 )
 
 type issueController struct{}
@@ -419,11 +418,8 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		if err != nil || db == nil {
 			log.Fatal(err)
 		}
-		var dbsql *sqlx.DB
 
-		query,_, err := sqlx.In("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id IN (?);",u.Issues)
-		query = dbsql.Rebind(query)
-		get_cluster_issues, err := db.Query(query)
+		get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = ?",u.Issues)
 		if err != nil || get_cluster_issues == nil {
 			log.Fatal(err)
 		}
