@@ -402,7 +402,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 	func (is issueController) Cluster(rw http.ResponseWriter, req *http.Request) {
 
 		var u models.ClusterIssues
-		var i models.IssueList
+		var issue models.IssueList
 
 		flag := 1
 
@@ -419,12 +419,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			log.Fatal(err)
 		}
 
-		get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = ?",u.Issues)
-		if err != nil || get_cluster_issues == nil {
-			log.Fatal(err)
-		}
-		defer get_cluster_issues.Close()
-
 		var issue_id int
 		var name string
 		var issue_type string
@@ -436,21 +430,30 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		var address string
 		var user_id int
 		var no_of_issues int
-		for get_cluster_issues.Next() {
-			err := get_cluster_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
-			if err != nil {
+
+		for i:=0 ; i< len(u.Issues) ; i++ {
+			get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = $1",u.Issues[i])
+			if err != nil || get_cluster_issues == nil {
 				log.Fatal(err)
 			}
-			issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
-			i.Issue_Details = append(i.Issue_Details, issue_det)
-			no_of_issues++
-			flag = 0
+			defer get_cluster_issues.Close()
+			for get_cluster_issues.Next() {
+				err := get_cluster_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
+				if err != nil {
+					log.Fatal(err)
+				}
+				issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
+				issue.Issue_Details = append(issue.Issue_Details, issue_det)
+				no_of_issues++
+				flag = 0
+			}
 		}
+
 		if flag == 0 {
 			b, err := json.Marshal(models.IssueList{
 				Success:       "true",
 				No_Of_Issues:  no_of_issues,
-				Issue_Details: i.Issue_Details,
+				Issue_Details: issue.Issue_Details,
 			})
 			if err != nil {
 				log.Fatal(err)
