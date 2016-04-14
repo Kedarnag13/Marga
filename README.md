@@ -31,7 +31,7 @@ go get github.com/tools/godep
 godep save
 ```
 ---
-# Schema definitions
+## Schema definitions
 
 ### create users table
 ```
@@ -52,6 +52,7 @@ my_points int,
 type varchar(100),
 PRIMARY KEY(id),
 UNIQUE (username, mobile_number));
+```
 
 ### create devices table
 ```
@@ -62,6 +63,7 @@ user_id int,
 CONSTRAINT devices_users_key FOREIGN KEY(user_id)
 REFERENCES users(id),
 PRIMARY KEY(devise_token));
+```
 
 ### create sessions table
 ```
@@ -74,6 +76,7 @@ REFERENCES users(id),
 devise_token varchar(320),
 CONSTRAINT sessions_devices_key FOREIGN KEY(devise_token)
 REFERENCES devices(devise_token));
+```
 
 ### create issues table
 ```
@@ -93,6 +96,7 @@ user_id int,
 CONSTRAINT issues_users_key FOREIGN KEY (user_id)
 REFERENCES users(id),
 PRIMARY KEY(id));
+```
 
 ### create comments table
 ```
@@ -107,6 +111,7 @@ issue_id int,
 CONSTRAINT comments_issues_key FOREIGN KEY(issue_id)
 REFERENCES issues(id),
 PRIMARY KEY(id));
+```
 
 ### create notifications table
 ```
@@ -120,6 +125,7 @@ REFERENCES users(id),
 reciever_id int,
 CONSTRAINT notifications_users_reciever_key FOREIGN KEY(reciever_id)
 REFERENCES users(id));
+```
 
 
 ---
@@ -179,6 +185,7 @@ Responce
 }
 
 The user is logged in as he signs up into rVidi. A session is created as soon as he signs up.
+```
 
 ### Sign In
 
@@ -214,6 +221,7 @@ Responce
     "DeviseToken": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"
   }
 }
+```
 
 ### Sign Out
 
@@ -241,6 +249,7 @@ Responce
     "Type": ""
   }
 }
+```
 
 ### Create Issue
 
@@ -251,6 +260,7 @@ Method POST
 Data has to be sent in raw format
 ```
 {"name":"hi", "type":"street light", "description":"no strret light", "latitude":12345, "longitude":34567, "image":"sajgdjsahdgjsahdg", "status":true, "address":"1st main", "user_id":1}
+```
 
 Responce
 ```
@@ -273,6 +283,7 @@ Responce
     "Created_at": "2016-04-14T12:01:34.983278213+05:30"
   }
 }
+```
 
 ### List Issues 
 
@@ -301,6 +312,7 @@ Responce
     }
   ]
 }
+```
 
 ### Listing the issue of a particular user
 
@@ -329,8 +341,53 @@ Responce
     }
   ]
 }
+```
 
-### 
+### Get Issues on type
+
+URL - 
+
+
+
+### MyIssues
+
+URL - http://localhost:3009//user/1/issues
+
+Method GET
+
+Responce
+```
+
+{
+  "Success": "true",
+  "No_Of_Issues": 1,
+  "Issue_Details": [
+    {
+      "Issue_id": 1,
+      "Name": "hi",
+      "Type": "street light",
+      "Description": "no strret light",
+      "Latitude": 12345,
+      "Longitude": 34567,
+      "Image": "sajgdjsahdgjsahdg",
+      "Status": true,
+      "Address": "1st main",
+      "User_id": 1
+    }
+  ]
+}
+```
+
+### To create Cluster of issues
+
+URL - 
+
+Method POST
+
+Data has to be sent in raw format
+```
+
+README.md
 
 
 
