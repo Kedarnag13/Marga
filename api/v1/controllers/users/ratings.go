@@ -3,7 +3,6 @@ package users
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/Kedarnag13/Marga/api/v1/models"
 	"github.com/asaskevich/govalidator"
@@ -123,7 +122,6 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
-			fmt.Println("You have rated successfully")
 		}
 	}
 end:

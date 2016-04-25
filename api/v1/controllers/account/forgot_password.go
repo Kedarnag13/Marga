@@ -37,12 +37,9 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 	mobile_number = strings.Join(reg, "")
 	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	b := make([]rune, 9)
-	fmt.Println(mobile_number)
 	for i := range b {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
-
-	fmt.Println("password", string(b))
 
 	var (
 		AccountSid = "AC996c79a79cbd18129c4cb47edd03870c"
@@ -78,7 +75,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		}
 		s, resp, err := c.Messages.Send(From, To, params)
 		if err != nil {
-			
+
 			b, err := json.Marshal(models.LogErrorMessage{
 				Success: "false",
 				Error:   err,

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 )
@@ -33,7 +32,6 @@ func Check_for_user(user_id int) bool {
 	if flag == 0 {
 		return true
 	} else {
-		fmt.Println("User does not exist")
 		return false
 	}
 }
@@ -64,8 +62,6 @@ func Check_for_user_session(user_id int) bool {
 	if flag == 0 {
 		return true
 	} else {
-		fmt.Println("Require Login")
 		return false
 	}
 }
-
