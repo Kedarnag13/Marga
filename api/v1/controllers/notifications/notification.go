@@ -2,7 +2,6 @@ package notifications
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
@@ -18,8 +17,6 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("senderid notifications:", senderid)
-	fmt.Println("recieverid notifications:", recieverid)
 
 	user_session_existance := controllers.Check_for_user_session(recieverid)
 	if senderid == recieverid {
@@ -33,7 +30,6 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 		for tokens.Next() {
 			var devise_token string
 			err := tokens.Scan(&devise_token)
-			fmt.Println("devise_token in notifications:", devise_token)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -70,7 +66,5 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 	}
 end:
 	db.Close()
-	fmt.Println("response1 notifications:", response1)
-	fmt.Println("response2 notifications:", response2)
 	return response1, response2
 }
