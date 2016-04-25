@@ -159,7 +159,7 @@ Data has to be sent in raw format
 ```
 {"name":"steve","username":"jobs","email":"steve@example.com","password":"password","password_confirmation":"password","city":"mysore","mobile_number":"123456789","latitude":12345,"longitude":12345,"type":"user","devise_token":"039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"}
 
-Responce
+Response
 ```
 {
 	"Success": "true",
@@ -197,7 +197,7 @@ Data has to be sent in raw format
 ```
 {"password":"password","mobile_number":"123456789","devise_token":"039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"}
 
-Responce
+Response
 ```
 {
 	"Success": "true",
@@ -229,7 +229,7 @@ URL - http://localhost:3000/log_out/039d51057a2c6125ba53fe6d90daee31837fbc76145d
 
 Method GET
 
-Responce
+Response
 ```
 {
 	"Success": "true",
@@ -262,7 +262,7 @@ Data has to be sent in raw format
 {"name":"hi", "type":"street light", "description":"no strret light", "latitude":12345, "longitude":34567, "image":"sajgdjsahdgjsahdg", "status":true, "address":"1st main", "user_id":1}
 ```
 
-Responce
+Response
 ```
 
 {
@@ -292,7 +292,7 @@ URL - http://localhost:3001/issues
 
 Method GET
 
-Responce
+Response
 ```
 
 {
@@ -321,7 +321,7 @@ URL - http://localhost:3001/user/1/issues/1
 
 Method GET
 
-Responce
+Response
 ```
 
 {
@@ -350,7 +350,7 @@ URL - http://localhost:3009//user/1/issues
 
 Method GET
 
-Responce
+Response
 ```
 
 {
@@ -382,7 +382,66 @@ Method POST
 Data has to be sent in raw format
 
 ```
+{"Issues":[1,22,3,4,515]}
+```
 
+Response  
+
+```
+{
+	"Success": "true",
+	"No_Of_Issues": 4,
+	"Issue_Details": [
+		{
+			"Issue_id": 1,
+			"Name": "KISHAN",
+			"Type": "sew",
+			"Description": "HEBBAL",
+			"Latitude": 12.35936039128561,
+			"Longitude": 76.61824557006044,
+			"Image": "1454503290820.25.png",
+			"Status": true,
+			"Address": "HEBBAL\n",
+			"User_id": 1
+		},
+		{
+			"Issue_id": 22,
+			"Name": "APEKSHA",
+			"Type": "lights",
+			"Description": "STREET LIGHTS NOT WORKING",
+			"Latitude": 12.35916855900871,
+			"Longitude": 76.61823935799828,
+			"Image": "1457501102185.19.png",
+			"Status": true,
+			"Address": "VIJAYNAGAR",
+			"User_id": 18
+		},
+		{
+			"Issue_id": 3,
+			"Name": "SAJITH",
+			"Type": "sew",
+			"Description": "NVKVBL",
+			"Latitude": 12.35915686951162,
+			"Longitude": 76.61823252682942,
+			"Image": "1454506498023.37.png",
+			"Status": true,
+			"Address": "VKBKB",
+			"User_id": 2
+		},
+		{
+			"Issue_id": 4,
+			"Name": "SAJITH",
+			"Type": "sew",
+			"Description": "VKBKB",
+			"Latitude": 12.3591568321169,
+			"Longitude": 76.61823267589534,
+			"Image": "1454506677063.38.png",
+			"Status": true,
+			"Address": "VKBKB",
+			"User_id": 2
+		}
+	]
+}
 ```
 
 README.md
