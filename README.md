@@ -159,29 +159,29 @@ Data has to be sent in raw format
 ```
 {"name":"steve","username":"jobs","email":"steve@example.com","password":"password","password_confirmation":"password","city":"mysore","mobile_number":"123456789","latitude":12345,"longitude":12345,"type":"user","devise_token":"039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"}
 
-Responce
+Response
 ```
 {
-  "Success": "true",
-  "Message": "User created Successfully!",
-  "User": {
-    "Id": 1,
-    "Name": "steve",
-    "Username": "jobs",
-    "Email": "steve@example.com",
-    "Mobile_number": "123456789",
-    "Latitude": 12345,
-    "Longitude": 12345,
-    "Password": "password",
-    "Password_confirmation": "password",
-    "City": "mysore",
-    "Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
-    "Type": "user"
-  },
-  "Session": {
-    "SessionId": 1,
-    "DeviseToken": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"
-  }
+	"Success": "true",
+	"Message": "User created Successfully!",
+	"User": {
+		"Id": 1,
+		"Name": "steve",
+		"Username": "jobs",
+		"Email": "steve@example.com",
+		"Mobile_number": "123456789",
+		"Latitude": 12345,
+		"Longitude": 12345,
+		"Password": "password",
+		"Password_confirmation": "password",
+		"City": "mysore",
+		"Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
+		"Type": "user"
+	},
+	"Session": {
+		"SessionId": 1,
+		"DeviseToken": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"
+	}
 }
 
 The user is logged in as he signs up into rVidi. A session is created as soon as he signs up.
@@ -195,31 +195,31 @@ Method POST
 
 Data has to be sent in raw format
 ```
-{"name":"steve","username":"jobs","email":"steve@example.com","password":"password","password_confirmation":"password","city":"mysore","mobile_number":"123456789","latitude":12345,"longitude":12345,"type":"1","devise_token":"039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"}
+{"password":"password","mobile_number":"123456789","devise_token":"039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"}
 
-Responce
+Response
 ```
 {
-  "Success": "true",
-  "Message": "Logged in Successfully",
-  "User": {
-    "Id": 1,
-    "Name": "steve",
-    "Username": "jobs",
-    "Email": "steve@example.com",
-    "Mobile_number": "123456789",
-    "Latitude": 12345,
-    "Longitude": 12345,
-    "Password": "",
-    "Password_confirmation": "",
-    "City": "mysore",
-    "Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
-    "Type": "user"
-  },
-  "Session": {
-    "SessionId": 1,
-    "DeviseToken": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"
-  }
+	"Success": "true",
+	"Message": "Logged in Successfully",
+	"User": {
+		"Id": 1,
+		"Name": "steve",
+		"Username": "jobs",
+		"Email": "steve@example.com",
+		"Mobile_number": "123456789",
+		"Latitude": 12345,
+		"Longitude": 12345,
+		"Password": "",
+		"Password_confirmation": "",
+		"City": "mysore",
+		"Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
+		"Type": "user"
+	},
+	"Session": {
+		"SessionId": 1,
+		"DeviseToken": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2"
+	}
 }
 ```
 
@@ -229,25 +229,25 @@ URL - http://localhost:3000/log_out/039d51057a2c6125ba53fe6d90daee31837fbc76145d
 
 Method GET
 
-Responce
+Response
 ```
 {
-  "Success": "true",
-  "Message": "Logged out Successfully",
-  "User": {
-    "Id": 0,
-    "Name": "",
-    "Username": "",
-    "Email": "",
-    "Mobile_number": "",
-    "Latitude": 0,
-    "Longitude": 0,
-    "Password": "",
-    "Password_confirmation": "",
-    "City": "",
-    "Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
-    "Type": ""
-  }
+	"Success": "true",
+	"Message": "Logged out Successfully",
+	"User": {
+		"Id": 0,
+		"Name": "",
+		"Username": "",
+		"Email": "",
+		"Mobile_number": "",
+		"Latitude": 0,
+		"Longitude": 0,
+		"Password": "",
+		"Password_confirmation": "",
+		"City": "",
+		"Devise_token": "039d51057a2c6125ba53fe6d90daee31837fbc76145dad6186f036cf1d2",
+		"Type": ""
+	}
 }
 ```
 
@@ -262,55 +262,56 @@ Data has to be sent in raw format
 {"name":"hi", "type":"street light", "description":"no strret light", "latitude":12345, "longitude":34567, "image":"sajgdjsahdgjsahdg", "status":true, "address":"1st main", "user_id":1}
 ```
 
-Responce
+Response
 ```
 
 {
-  "Success": "true",
-  "Message": "Issue created Successfully!",
-  "Issue": {
-    "Id": 1,
-    "Name": "hi",
-    "Type": "street light",
-    "Description": "no strret light",
-    "Latitude": 12345,
-    "Longitude": 34567,
-    "Image": "sajgdjsahdgjsahdg",
-    "Status": true,
-    "Address": "1st main",
-    "User_id": 1,
-    "Corporator_id": 0,
-    "Created_at": "2016-04-14T12:01:34.983278213+05:30"
-  }
+	"Success": "true",
+	"Message": "Issue created Successfully!",
+	"Issue": {
+		"Id": 1,
+		"Name": "hi",
+		"Type": "street light",
+		"Description": "no strret light",
+		"Latitude": 12345,
+		"Longitude": 34567,
+		"Image": "sajgdjsahdgjsahdg",
+		"Status": true,
+		"Address": "1st main",
+		"User_id": 1,
+		"Corporator_id": 0,
+		"Created_at": "2016-04-14T12:01:34.983278213+05:30"
+	}
 }
 ```
+There are 7 Issues available: 'sew', 'elec', 'dog', 'watelec', 'lights', 'pot', 'garbage'
 
-### List Issues 
+### List Issues
 
 URL - http://localhost:3001/issues
 
 Method GET
 
-Responce
+Response
 ```
 
 {
-  "Success": "true",
-  "No_Of_Issues": 1,
-  "Issue_Details": [
-    {
-      "Issue_id": 1,
-      "Name": "hi",
-      "Type": "street light",
-      "Description": "no strret light",
-      "Latitude": 12345,
-      "Longitude": 34567,
-      "Image": "sajgdjsahdgjsahdg", 
-      "Status": true,
-      "Address": "1st main",
-      "User_id": 1
-    }
-  ]
+	"Success": "true",
+	"No_Of_Issues": 1,
+	"Issue_Details": [
+		{
+			"Issue_id": 1,
+			"Name": "hi",
+			"Type": "street light",
+			"Description": "no strret light",
+			"Latitude": 12345,
+			"Longitude": 34567,
+			"Image": "sajgdjsahdgjsahdg",
+			"Status": true,
+			"Address": "1st main",
+			"User_id": 1
+		}
+	]
 }
 ```
 
@@ -320,34 +321,28 @@ URL - http://localhost:3001/user/1/issues/1
 
 Method GET
 
-Responce
+Response
 ```
 
 {
-  "Success": "true",
-  "No_Of_Issues": 1,
-  "Issue_Details": [
-    {
-      "Issue_id": 1,
-      "Name": "hi",
-      "Type": "street light",
-      "Description": "no strret light",
-      "Latitude": 12345,
-      "Longitude": 34567,
-      "Image": "sajgdjsahdgjsahdg",
-      "Status": true,
-      "Address": "1st main",
-      "User_id": 1
-    }
-  ]
+	"Success": "true",
+	"No_Of_Issues": 1,
+	"Issue_Details": [
+		{
+			"Issue_id": 1,
+			"Name": "hi",
+			"Type": "street light",
+			"Description": "no strret light",
+			"Latitude": 12345,
+			"Longitude": 34567,
+			"Image": "sajgdjsahdgjsahdg",
+			"Status": true,
+			"Address": "1st main",
+			"User_id": 1
+		}
+	]
 }
 ```
-
-### Get Issues on type
-
-URL - 
-
-
 
 ### MyIssues
 
@@ -355,41 +350,98 @@ URL - http://localhost:3009//user/1/issues
 
 Method GET
 
-Responce
+Response
 ```
 
 {
-  "Success": "true",
-  "No_Of_Issues": 1,
-  "Issue_Details": [
-    {
-      "Issue_id": 1,
-      "Name": "hi",
-      "Type": "street light",
-      "Description": "no strret light",
-      "Latitude": 12345,
-      "Longitude": 34567,
-      "Image": "sajgdjsahdgjsahdg",
-      "Status": true,
-      "Address": "1st main",
-      "User_id": 1
-    }
-  ]
+	"Success": "true",
+	"No_Of_Issues": 1,
+	"Issue_Details": [
+		{
+			"Issue_id": 1,
+			"Name": "hi",
+			"Type": "street light",
+			"Description": "no strret light",
+			"Latitude": 12345,
+			"Longitude": 34567,
+			"Image": "sajgdjsahdgjsahdg",
+			"Status": true,
+			"Address": "1st main",
+			"User_id": 1
+		}
+	]
 }
 ```
 
-### To create Cluster of issues
+### To segrigate the cluster of issues
 
-URL - 
+URL -http://localhost:3000/cluster/issues
 
 Method POST
 
 Data has to be sent in raw format
+
+```
+{"Issues":[1,22,3,4,515]}
+```
+
+Response  
+
+```
+{
+	"Success": "true",
+	"No_Of_Issues": 4,
+	"Issue_Details": [
+		{
+			"Issue_id": 1,
+			"Name": "KISHAN",
+			"Type": "sew",
+			"Description": "HEBBAL",
+			"Latitude": 12.35936039128561,
+			"Longitude": 76.61824557006044,
+			"Image": "1454503290820.25.png",
+			"Status": true,
+			"Address": "HEBBAL\n",
+			"User_id": 1
+		},
+		{
+			"Issue_id": 22,
+			"Name": "APEKSHA",
+			"Type": "lights",
+			"Description": "STREET LIGHTS NOT WORKING",
+			"Latitude": 12.35916855900871,
+			"Longitude": 76.61823935799828,
+			"Image": "1457501102185.19.png",
+			"Status": true,
+			"Address": "VIJAYNAGAR",
+			"User_id": 18
+		},
+		{
+			"Issue_id": 3,
+			"Name": "SAJITH",
+			"Type": "sew",
+			"Description": "NVKVBL",
+			"Latitude": 12.35915686951162,
+			"Longitude": 76.61823252682942,
+			"Image": "1454506498023.37.png",
+			"Status": true,
+			"Address": "VKBKB",
+			"User_id": 2
+		},
+		{
+			"Issue_id": 4,
+			"Name": "SAJITH",
+			"Type": "sew",
+			"Description": "VKBKB",
+			"Latitude": 12.3591568321169,
+			"Longitude": 76.61823267589534,
+			"Image": "1454506677063.38.png",
+			"Status": true,
+			"Address": "VKBKB",
+			"User_id": 2
+		}
+	]
+}
 ```
 
 README.md
-
-
-
-
-
