@@ -373,6 +373,59 @@ Response
 }
 ```
 
+### To create comments for an issue
+
+URL -http://localhost:3000/create_comment
+
+Method POST
+
+Data has to be sent in raw format
+
+```
+{"User_id":1,"Issue_id":5,"Description":"I have the same issue"}
+```
+
+Response  
+
+```
+{
+	"Success": "true",
+	"Message": "Comment added successfully"
+}
+```
+
+### To get comments for a particular issue
+
+URL -http://localhost:3000//comment/issues/5
+
+Method GET
+
+Response  
+
+```
+{
+	"Success": "true",
+	"No_of_comments": 3,
+	"Comment_details": [
+		{
+			"Comment_message": "Transformer issue near Vijaynagar 2nd stage.please take necessary action ASAP",
+			"User_id": 10,
+			"Name": "KISHAN"
+		},
+		{
+			"Comment_message": "Facing issue",
+			"User_id": 17,
+			"Name": "KISHAN"
+		},
+		{
+			"Comment_message": "I have the same issue",
+			"User_id": 1,
+			"Name": "KISHAN"
+		}
+	]
+}
+```
+
 ### To segrigate the cluster of issues
 
 URL -http://localhost:3000/cluster/issues
@@ -443,5 +496,6 @@ Response
 	]
 }
 ```
+
 
 README.md
