@@ -5,7 +5,6 @@ import (
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
-	"log"
 )
 
 func Send_notification(senderid int, recieverid int, message string) (string, string) {
