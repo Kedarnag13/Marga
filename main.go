@@ -17,7 +17,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer db.DBCon.Close()
 	r := mux.NewRouter()
 	// Account Routes
 	r.HandleFunc("/sign_up", account.Registration.Create).Methods("POST")
