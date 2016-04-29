@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -32,11 +31,11 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 	flag := 1
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil || db == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	get_issues, err := db.Query("SELECT id from issues where id = $1 AND status = true", c.Issue_id)
 	if err != nil || get_issues == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	for get_issues.Next() {
@@ -44,18 +43,18 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 		var issue_id int
 		err := get_issues.Scan(&issue_id)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		if issue_id == c.Issue_id {
 
 			var insert_comment string = "insert into comments(description,user_id,issue_id) values ($1,$2,$3)"
 			prepare_comments, err := db.Prepare(insert_comment)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			res, err := prepare_comments.Exec(c.Description, c.User_id, c.Issue_id)
 			if err != nil || res == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 		}
 	}
@@ -66,7 +65,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -77,7 +76,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 			Error:   "The issue is closed",
 		})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -95,12 +94,12 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 	flag := 1
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil || db == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	get_comments, err := db.Query("SELECT description, user_id from comments where issue_id = $1", Issue_id)
 	if err != nil || get_comments == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	var no_of_comment int
@@ -110,17 +109,17 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 		var name string
 		err := get_comments.Scan(&comment_message, &user_id)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		get_user_details, err := db.Query("SELECT name from users where id= $1", user_id)
 		if err != nil || get_user_details == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		for get_user_details.Next() {
 			err := get_user_details.Scan(&name)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 		}
 
@@ -137,7 +136,7 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 			Comment_details: c.Comment_details,
 		})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -151,7 +150,7 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)

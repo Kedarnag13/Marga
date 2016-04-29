@@ -3,7 +3,6 @@ package pq
 import (
 	"bytes"
 	"encoding/binary"
-
 	"github.com/lib/pq/oid"
 )
 
@@ -47,44 +46,28 @@ func (b *readBuf) byte() byte {
 	return b.next(1)[0]
 }
 
-type writeBuf struct {
-	buf []byte
-	pos int
-}
+type writeBuf []byte
 
 func (b *writeBuf) int32(n int) {
 	x := make([]byte, 4)
 	binary.BigEndian.PutUint32(x, uint32(n))
-	b.buf = append(b.buf, x...)
+	*b = append(*b, x...)
 }
 
 func (b *writeBuf) int16(n int) {
 	x := make([]byte, 2)
 	binary.BigEndian.PutUint16(x, uint16(n))
-	b.buf = append(b.buf, x...)
+	*b = append(*b, x...)
 }
 
 func (b *writeBuf) string(s string) {
-	b.buf = append(b.buf, (s + "\000")...)
+	*b = append(*b, (s + "\000")...)
 }
 
 func (b *writeBuf) byte(c byte) {
-	b.buf = append(b.buf, c)
+	*b = append(*b, c)
 }
 
 func (b *writeBuf) bytes(v []byte) {
-	b.buf = append(b.buf, v...)
-}
-
-func (b *writeBuf) wrap() []byte {
-	p := b.buf[b.pos:]
-	binary.BigEndian.PutUint32(p, uint32(len(p)))
-	return b.buf
-}
-
-func (b *writeBuf) next(c byte) {
-	p := b.buf[b.pos:]
-	binary.BigEndian.PutUint32(p, uint32(len(p)))
-	b.pos = len(b.buf) + 1
-	b.buf = append(b.buf, c, 0, 0, 0, 0)
+	*b = append(*b, v...)
 }

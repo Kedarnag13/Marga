@@ -3,9 +3,8 @@ package notifications
 import (
 	"database/sql"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
-	"github.com/anachronistic/apns"
+	apns "github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
-	"log"
 )
 
 func Send_notification(senderid int, recieverid int, message string) (string, string) {
@@ -15,7 +14,7 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	user_session_existance := controllers.Check_for_user_session(recieverid)
@@ -25,13 +24,13 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 	} else if user_session_existance == true {
 		tokens, err := db.Query("SELECT devise_token FROM devices WHERE user_id=$1", recieverid)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		for tokens.Next() {
 			var devise_token string
 			err := tokens.Scan(&devise_token)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			payload := apns.NewPayload()
 			payload.Alert = message
@@ -48,7 +47,7 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 
 			alert, _ := pn.PayloadString()
 			if alert == "" {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			flag = 0

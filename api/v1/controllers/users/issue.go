@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,11 +25,11 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	flag := 1
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil || db == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	get_all_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
 	if err != nil || get_all_issues == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	var issue_id int
 	var name string
@@ -46,7 +45,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	for get_all_issues.Next() {
 		err := get_all_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 		i.Issue_Details = append(i.Issue_Details, issue_det)
@@ -61,7 +60,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 			Issue_Details: i.Issue_Details,
 		})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -75,7 +74,7 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -97,12 +96,12 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", user_id)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	user_session_existance := controllers.Check_for_user_session(user_id)
@@ -113,7 +112,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -136,7 +135,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 			err := get_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 			my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
@@ -153,7 +152,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			Issue_Details: my_issues.Issue_Details,
 		})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -166,7 +165,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
@@ -187,12 +186,12 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		if flag == 1 {
@@ -210,7 +209,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 
 				err := get_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 				my_issues.Issue_Details = append(my_issues.Issue_Details, issue_det)
@@ -227,7 +226,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				Issue_Details: my_issues.Issue_Details,
 			})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
@@ -241,7 +240,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
@@ -265,11 +264,11 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		}
 		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 		if err != nil || db == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		fetch_id, err := db.Query("SELECT coalesce(max(id), 0) FROM issues")
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		if flag == 1 {
@@ -284,7 +283,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 					Error:   err.Error(),
 				})
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				rw.Header().Set("Content-Type", "application/json")
 				rw.Write(b)
@@ -297,22 +296,22 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				err = fetch_id.Scan(&id)
 
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				id = id + 1
 
 				created_at := time.Now()
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				var insert_issue string = "insert into issues (id, name, type, description, latitude, longitude, image, status, address, user_id, created_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)"
 				prepare_insert_issue, err := db.Prepare(insert_issue)
 				if err != nil || prepare_insert_issue == nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				issue_res, err := prepare_insert_issue.Exec(id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, created_at)
 				if err != nil || issue_res == nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, i.Corporator_id, created_at}
 
@@ -331,7 +330,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
@@ -347,11 +346,11 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		flag := 1
 		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 		if err != nil || db == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		get_wards, err := db.Query("SELECT id, name, email, devise_token  FROM wards")
 		if err != nil || get_wards == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		var no_of_wards int
 		for get_wards.Next() {
@@ -361,7 +360,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			var devise_token string
 			err = get_wards.Scan(&id, &name, &email, &devise_token)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			ward_det := models.WardDetails{id, name, email, devise_token}
 			ward.Ward_Details = append(ward.Ward_Details, ward_det)
@@ -375,7 +374,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				Ward_Details: ward.Ward_Details,
 			})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
@@ -389,7 +388,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
@@ -416,7 +415,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		}
 		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 		if err != nil || db == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		var issue_id int
@@ -434,13 +433,13 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		for i:=0 ; i< len(u.Issues) ; i++ {
 			get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = $1",u.Issues[i])
 			if err != nil || get_cluster_issues == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			defer get_cluster_issues.Close()
 			for get_cluster_issues.Next() {
 				err := get_cluster_issues.Scan(&issue_id, &name, &issue_type, &description, &latitude, &longitude, &image, &status, &address, &user_id)
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				issue_det := models.IssueDetails{issue_id, name, issue_type, description, latitude, longitude, image, status, address, user_id}
 				issue.Issue_Details = append(issue.Issue_Details, issue_det)
@@ -456,7 +455,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				Issue_Details: issue.Issue_Details,
 			})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
@@ -470,7 +469,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)

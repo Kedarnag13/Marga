@@ -5,11 +5,12 @@ before_install:
   - cp .netrc ~
   - chmod 600 .netrc
 install:
-  - go get github.com/tools/godep  
+  - go get -v
+  - go get github.com/tools/godep
+  - go get github.com/anachronistic/apns
 before_script:
-  - psql -c 'create database travis_postgis;' -U postgres
-  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d travis_postgis
-  - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d travis_postgis
+  - psql -c 'create database marga_development;' -U postgres
+  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d marga_development
+  - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d marga_development
 script:
-  - psql -f data.sql -U postgres -d travis_postgis
   - "godep go test -v ./..."
