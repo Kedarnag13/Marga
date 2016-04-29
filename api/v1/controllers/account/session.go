@@ -125,16 +125,23 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 		for get_session.Next() {
 			flag = 1
 			delete_sessions, err := db.DBCon.Prepare("DELETE from sessions where devise_token =$1")
+			if err != nil {
+				panic(err)
+			}
 			delete_sessions_res, err := delete_sessions.Exec(user.Devise_token)
 			if err != nil || delete_sessions_res == nil {
 				panic(err)
 			}
-
+			defer delete_sessions.Close()
 			delete_devise, err := db.DBCon.Prepare("DELETE from devices where devise_token =$1")
+			if err != nil {
+				panic(err)
+			}
 			delete_devise_res, err := delete_devise.Exec(user.Devise_token)
 			if err != nil || delete_devise_res == nil {
 				panic(err)
 			}
+			defer delete_devise.Close()
 			if logout == true {
 				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, ""}
 				return "Logged out Successfully", false, user
