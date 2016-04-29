@@ -3,7 +3,7 @@ package users
 import (
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/models"
-	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
+	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"io/ioutil"

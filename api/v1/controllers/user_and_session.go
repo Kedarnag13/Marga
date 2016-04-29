@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
+	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	_ "github.com/lib/pq"
 )
 

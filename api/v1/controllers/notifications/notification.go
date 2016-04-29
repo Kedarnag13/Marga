@@ -2,7 +2,7 @@ package notifications
 
 import (
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
-	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
+	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	apns "github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
 )
