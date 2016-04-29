@@ -3,7 +3,7 @@ package notifications
 import (
 	"database/sql"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
-	"github.com/anachronistic/apns"
+	// "github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
 )
 
