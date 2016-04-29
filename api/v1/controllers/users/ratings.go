@@ -1,10 +1,10 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/Kedarnag13/Marga/api/v1/models"
+	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
 	"github.com/asaskevich/govalidator"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -29,10 +29,6 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil || db == nil {
-		panic(err)
-	}
 	sender_existance := controllers.Check_for_user(point.SenderId)
 	sender_session_existance := controllers.Check_for_user_session(point.SenderId)
 	receiver_existance := controllers.Check_for_user(point.ReciverId)
@@ -94,7 +90,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		goto end
 	} else {
 
-		fetch_point, err := db.Query("select coalesce(my_points, 0) from users where id = $1", point.ReciverId)
+		fetch_point, err := db.DBCon.Query("select coalesce(my_points, 0) from users where id = $1", point.ReciverId)
 		if err != nil {
 			panic(err)
 		}
@@ -106,7 +102,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 				panic(err)
 			}
 			new_points := existing_points + 1
-			update_point, err := db.Query("UPDATE users set my_points = $1 where id = $2", new_points, point.ReciverId)
+			update_point, err := db.DBCon.Query("UPDATE users set my_points = $1 where id = $2", new_points, point.ReciverId)
 			if err != nil || update_point == nil {
 				panic(err)
 			}

@@ -1,10 +1,10 @@
 package account
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/Kedarnag13/Marga/api/v1/models"
+	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -96,15 +96,11 @@ end:
 
 func session(user models.User, login, logout bool) (string, bool, models.User) {
 
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	get_session, err := db.DBCon.Query("SELECT * from sessions where devise_token=$1", user.Devise_token)
 	if err != nil {
 		panic(err)
 	}
-	get_session, err := db.Query("SELECT * from sessions where devise_token=$1", user.Devise_token)
-	if err != nil {
-		panic(err)
-	}
-	get_user_id, err := db.Query("SELECT id FROM users WHERE mobile_number=$1", user.Mobile_number)
+	get_user_id, err := db.DBCon.Query("SELECT id FROM users WHERE mobile_number=$1", user.Mobile_number)
 	if err != nil {
 		panic(err)
 	}
@@ -128,13 +124,13 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 	} else {
 		for get_session.Next() {
 			flag = 1
-			delete_sessions, err := db.Prepare("DELETE from sessions where devise_token =$1")
+			delete_sessions, err := db.DBCon.Prepare("DELETE from sessions where devise_token =$1")
 			delete_sessions_res, err := delete_sessions.Exec(user.Devise_token)
 			if err != nil || delete_sessions_res == nil {
 				panic(err)
 			}
 
-			delete_devise, err := db.Prepare("DELETE from devices where devise_token =$1")
+			delete_devise, err := db.DBCon.Prepare("DELETE from devices where devise_token =$1")
 			delete_devise_res, err := delete_devise.Exec(user.Devise_token)
 			if err != nil || delete_devise_res == nil {
 				panic(err)
@@ -149,7 +145,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			return "Session does not exist", true, user
 		}
 		if login == true {
-			get_user, err := db.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type FROM users WHERE mobile_number=$1", user.Mobile_number)
+			get_user, err := db.DBCon.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type FROM users WHERE mobile_number=$1", user.Mobile_number)
 			if err != nil {
 				panic(err)
 			}
@@ -175,26 +171,25 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 				db_password := password
 				decrypt_password := controllers.Decrypt(key, db_password)
 				if mobile_number == user.Mobile_number && decrypt_password == user.Password {
-					var devise string = "insert into devices(devise_token,user_id)values ($1,$2)"
-					dev, err := db.Prepare(devise)
+					device, err := db.DBCon.Prepare("insert into devices(devise_token,user_id)values ($1,$2)")
 					if err != nil {
 						panic(err)
 					}
-					dev_res, err := dev.Exec(user.Devise_token, id)
+					dev_res, err := device.Exec(user.Devise_token, id)
 					if err != nil || dev_res == nil {
 						panic(err)
 					}
-					defer dev.Close()
+					defer device.Close()
 
-					var session string = "insert into sessions (user_id,devise_token) values ($1,$2)"
-					ses, err := db.Prepare(session)
+					session, err := db.DBCon.Prepare("insert into sessions (user_id,devise_token) values ($1,$2)")
 					if err != nil {
 						panic(err)
 					}
-					res, err := ses.Exec(id, user.Devise_token)
+					res, err := session.Exec(id, user.Devise_token)
 					if err != nil || res == nil {
 						panic(err)
 					}
+					defer session.Close()
 					user_details := models.User{id, name, username, email, mobile_number, latitude, longitude, "", "", city, devise_token, user_type}
 					return "Logged in Successfully", false, user_details
 				}
@@ -202,6 +197,5 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			defer get_user.Close()
 		}
 	}
-	db.Close()
 	return "Invalid Mobile Number or Password", true, user
 }

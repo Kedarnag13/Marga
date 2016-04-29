@@ -1,9 +1,9 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/models"
+	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -29,11 +29,8 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	flag := 1
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil || db == nil {
-		panic(err)
-	}
-	get_issues, err := db.Query("SELECT id from issues where id = $1 AND status = true", c.Issue_id)
+
+	get_issues, err := db.DBCon.Query("SELECT id from issues where id = $1 AND status = true", c.Issue_id)
 	if err != nil || get_issues == nil {
 		panic(err)
 	}
@@ -47,8 +44,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 		}
 		if issue_id == c.Issue_id {
 
-			var insert_comment string = "insert into comments(description,user_id,issue_id) values ($1,$2,$3)"
-			prepare_comments, err := db.Prepare(insert_comment)
+			prepare_comments, err := db.DBCon.Prepare("insert into comments(description,user_id,issue_id) values ($1,$2,$3)")
 			if err != nil {
 				panic(err)
 			}
@@ -56,6 +52,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 			if err != nil || res == nil {
 				panic(err)
 			}
+			defer prepare_comments.Close()
 		}
 	}
 	if flag == 0 {
@@ -92,12 +89,8 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 	Issue_id := issue_id
 
 	flag := 1
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil || db == nil {
-		panic(err)
-	}
 
-	get_comments, err := db.Query("SELECT description, user_id from comments where issue_id = $1", Issue_id)
+	get_comments, err := db.DBCon.Query("SELECT description, user_id from comments where issue_id = $1", Issue_id)
 	if err != nil || get_comments == nil {
 		panic(err)
 	}
@@ -112,7 +105,7 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 			panic(err)
 		}
 
-		get_user_details, err := db.Query("SELECT name from users where id= $1", user_id)
+		get_user_details, err := db.DBCon.Query("SELECT name from users where id= $1", user_id)
 		if err != nil || get_user_details == nil {
 			panic(err)
 		}
@@ -156,5 +149,4 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 comment_end:
-	db.Close()
 }

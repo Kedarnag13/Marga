@@ -1,10 +1,10 @@
 package users
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
 	"github.com/Kedarnag13/Marga/api/v1/models"
+	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -23,11 +23,8 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 	var i models.IssueList
 
 	flag := 1
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil || db == nil {
-		panic(err)
-	}
-	get_all_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
+
+	get_all_issues, err := db.DBCon.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues")
 	if err != nil || get_all_issues == nil {
 		panic(err)
 	}
@@ -80,7 +77,6 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 	}
 	index_end:
-	db.Close()
 }
 
 func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
@@ -94,12 +90,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 	id := vars["id"]
 	user_id, err := strconv.Atoi(id)
 
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-
-	get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", user_id)
+	get_issues, err := db.DBCon.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where user_id = $1 ", user_id)
 	if err != nil {
 		panic(err)
 	}
@@ -171,7 +162,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			rw.Write(b)
 		}
 		my_issue_index_end:
-		db.Close()
 	}
 
 	func (m issueController) Get_issues_on_type(rw http.ResponseWriter, req *http.Request) {
@@ -184,12 +174,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		vars := mux.Vars(req)
 		issue_type := vars["type"]
 
-		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-		if err != nil {
-			panic(err)
-		}
-
-		get_issues, err := db.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
+		get_issues, err := db.DBCon.Query("select id, name, type, description, latitude, longitude, image, status, address, user_id from issues where type = $1 ", issue_type)
 		if err != nil {
 			panic(err)
 		}
@@ -246,7 +231,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			rw.Write(b)
 		}
 		issue_on_type:
-		db.Close()
 	}
 
 	func (is issueController) Create(rw http.ResponseWriter, req *http.Request) {
@@ -262,11 +246,8 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-		if err != nil || db == nil {
-			panic(err)
-		}
-		fetch_id, err := db.Query("SELECT coalesce(max(id), 0) FROM issues")
+
+		fetch_id, err := db.DBCon.Query("SELECT coalesce(max(id), 0) FROM issues")
 		if err != nil {
 			panic(err)
 		}
@@ -304,8 +285,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				if err != nil {
 					panic(err)
 				}
-				var insert_issue string = "insert into issues (id, name, type, description, latitude, longitude, image, status, address, user_id, created_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)"
-				prepare_insert_issue, err := db.Prepare(insert_issue)
+				prepare_insert_issue, err := db.DBCon.Prepare("insert into issues (id, name, type, description, latitude, longitude, image, status, address, user_id, created_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)")
 				if err != nil || prepare_insert_issue == nil {
 					panic(err)
 				}
@@ -313,6 +293,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 				if err != nil || issue_res == nil {
 					panic(err)
 				}
+				defer prepare_insert_issue.Close()
 				issue := models.Issue{id, i.Name, i.Type, i.Description, i.Latitude, i.Longitude, i.Image, i.Status, i.Address, i.User_id, i.Corporator_id, created_at}
 
 				b, err := json.Marshal(models.SuccessfulCreateIssue{
@@ -337,18 +318,14 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			rw.Write(b)
 		}
 		issue_end:
-		db.Close()
 	}
 
 	func (ic issueController) List_wards(rw http.ResponseWriter, req *http.Request) {
 
 		var ward models.WardList
 		flag := 1
-		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-		if err != nil || db == nil {
-			panic(err)
-		}
-		get_wards, err := db.Query("SELECT id, name, email, devise_token  FROM wards")
+
+		get_wards, err := db.DBCon.Query("SELECT id, name, email, devise_token  FROM wards")
 		if err != nil || get_wards == nil {
 			panic(err)
 		}
@@ -394,7 +371,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			rw.Write(b)
 		}
 		ward_issue_end:
-		db.Close()
 	}
 
 
@@ -413,10 +389,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-		if err != nil || db == nil {
-			panic(err)
-		}
 
 		var issue_id int
 		var name string
@@ -430,8 +402,8 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		var user_id int
 		var no_of_issues int
 
-		for i:=0 ; i< len(u.Issues) ; i++ {
-			get_cluster_issues, err := db.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = $1",u.Issues[i])
+		for i := 0 ; i < len(u.Issues) ; i++ {
+			get_cluster_issues, err := db.DBCon.Query("SELECT id, name, type, description, latitude, longitude, image, status, address, user_id  FROM issues where id = $1",u.Issues[i])
 			if err != nil || get_cluster_issues == nil {
 				panic(err)
 			}
@@ -475,5 +447,4 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			rw.Write(b)
 		}
 		cluster_end:
-		db.Close()
 	}

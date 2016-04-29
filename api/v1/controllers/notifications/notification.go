@@ -1,8 +1,8 @@
 package notifications
 
 import (
-	"database/sql"
 	"github.com/Kedarnag13/Marga/api/v1/controllers"
+	"github.com/Qwinix/rVidi-Go/api/v1/config/db"
 	apns "github.com/anachronistic/apns"
 	_ "github.com/lib/pq"
 )
@@ -11,11 +11,6 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 	flag := 1
 	var response1 string
 	var response2 string
-
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
 
 	user_session_existance := controllers.Check_for_user_session(recieverid)
 	if senderid == recieverid {
@@ -64,6 +59,5 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 		response1, response2 = "Reciever does not have session", ""
 	}
 end:
-	db.Close()
 	return response1, response2
 }
