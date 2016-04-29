@@ -5,7 +5,7 @@ before_install:
   - cp .netrc ~
   - chmod 600 .netrc
 install:
-  - go get github.com/tools/godep  
+  - go get -v  
 before_script:
   - psql -c 'create database travis_postgis;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d travis_postgis
