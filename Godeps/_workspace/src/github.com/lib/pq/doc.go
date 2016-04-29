@@ -13,7 +13,7 @@ using this package directly. For example:
 	func main() {
 		db, err := sql.Open("postgres", "user=pqgotest dbname=pqgotest sslmode=verify-full")
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		age := 21
@@ -141,34 +141,34 @@ Usage example:
 
 	txn, err := db.Begin()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	stmt, err := txn.Prepare(pq.CopyIn("users", "name", "age"))
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	for _, user := range users {
 		_, err = stmt.Exec(user.Name, int64(user.Age))
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 	}
 
 	_, err = stmt.Exec()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	err = stmt.Close()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	err = txn.Commit()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 

@@ -8,7 +8,6 @@ import (
 	"github.com/asaskevich/govalidator"
 	_ "github.com/lib/pq"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -32,7 +31,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil || db == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	sender_existance := controllers.Check_for_user(point.SenderId)
 	sender_session_existance := controllers.Check_for_user_session(point.SenderId)
@@ -45,7 +44,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -59,7 +58,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		rw.Header().Set("Content-Type", "application/json")
@@ -77,7 +76,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		})
 
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -88,7 +87,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 			Error:   "The receiver does not exist",
 		})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -97,19 +96,19 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 
 		fetch_point, err := db.Query("select coalesce(my_points, 0) from users where id = $1", point.ReciverId)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		for fetch_point.Next() {
 			var existing_points int
 			err := fetch_point.Scan(&existing_points)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			new_points := existing_points + 1
 			update_point, err := db.Query("UPDATE users set my_points = $1 where id = $2", new_points, point.ReciverId)
 			if err != nil || update_point == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			b, err := json.Marshal(models.SuccessMessage{
@@ -118,7 +117,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 			})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)

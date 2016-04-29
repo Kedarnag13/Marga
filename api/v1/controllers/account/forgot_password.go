@@ -9,7 +9,6 @@ import (
 _ "github.com/lib/pq"
 "github.com/subosito/twilio"
 "io/ioutil"
-"log"
 "math/rand"
 "net/http"
 "strconv"
@@ -31,7 +30,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 
 	mobile_number := strconv.Itoa(u.MobileNumber)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	reg := []string{"+91", mobile_number}
 	mobile_number = strings.Join(reg, "")
@@ -49,18 +48,18 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		)
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	user_exist, err := db.Query("SELECT mobile_number FROM users where mobile_number = $1", u.MobileNumber)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	flag := 1
 	for user_exist.Next() {
 		var mobile_number int
 		err = user_exist.Scan(&mobile_number)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		if mobile_number == u.MobileNumber {
@@ -81,7 +80,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 				Error:   err,
 				})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
@@ -99,7 +98,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		encrypt_password := controllers.Encrypt(key, db_password)
 		update_pawssword, err := db.Query("UPDATE users set password = $1 where mobile_number = $2", encrypt_password, u.MobileNumber)
 		if err != nil || update_pawssword == nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		fmt.Println("Temporary Password sent successfully")
 		b, err := json.Marshal(models.SuccessMessage{
@@ -107,7 +106,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 			Message: "Temporary Password sent successfully",
 			})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -120,7 +119,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 			Error:   "User does not exist",
 			})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -142,11 +141,11 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	get_password, err := db.Query("SELECT password FROM users where id = $1", u.User_id)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	for get_password.Next() {
 		var old_password string
@@ -155,13 +154,13 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 		db_password := old_password
 		decrypt_password := controllers.Decrypt(key, db_password)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 
 		if decrypt_password == u.OldPassword {
 			update_pawssword, err := db.Query("UPDATE users set password = $1 where id = $2", u.NewPassword, u.User_id)
 			if err != nil || update_pawssword == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			fmt.Println("New password updated successfully")
 			b, err := json.Marshal(models.SuccessMessage{
@@ -169,7 +168,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 				Message: "New password updated successfully",
 				})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)
@@ -181,7 +180,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 				Error:   "Password reset failed",
 				})
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			rw.Header().Set("Content-Type", "application/json")
 			rw.Write(b)

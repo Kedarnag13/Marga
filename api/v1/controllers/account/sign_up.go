@@ -9,7 +9,6 @@ import (
 "github.com/asaskevich/govalidator"
 _ "github.com/lib/pq"
 "io/ioutil"
-"log"
 "net/http"
 "os"
 "regexp"
@@ -35,17 +34,17 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 	}
 	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 	if err != nil || db == nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	check_mobile_number, err := db.Query("SELECT mobile_number from users")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	fetch_id, err := db.Query("SELECT coalesce(max(id), 0) FROM users")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	if flag == 1 {
 		email := `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`
@@ -63,7 +62,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 					Error:   err.Error(),
 					})
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				rw.Header().Set("Content-Type", "application/json")
 				rw.Write(b)
@@ -79,7 +78,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			var mobile_number string
 			err = check_mobile_number.Scan(&mobile_number)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			if mobile_number == u.Mobile_number {
@@ -88,7 +87,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 					Error:   "Mobile number already exist",
 					})
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				rw.Header().Set("Content-Type", "application/json")
 				rw.Write(b)
@@ -106,7 +105,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			Error:   "Password and Password_confirmation do not match",
 			})
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		rw.Header().Set("Content-Type", "application/json")
 		rw.Write(b)
@@ -116,14 +115,14 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 	if flag == 1 {
 		session_response, err := db.Query("SELECT devise_token,user_id from sessions")
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		for session_response.Next() {
 			var devise_token string
 			var id int
 			err := session_response.Scan(&devise_token, &id)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			if devise_token == u.Devise_token {
 				b, err := json.Marshal(models.ErrorMessage{
@@ -132,7 +131,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 					})
 
 				if err != nil {
-					log.Fatal(err)
+					panic(err)
 				}
 				rw.Header().Set("Content-Type", "application/json")
 				rw.Write(b)
@@ -148,18 +147,18 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			err = fetch_id.Scan(&id)
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			id = id + 1
 
 			var insert_user string = "insert into users (id, name, username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)"
 			db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			prepare_insert_user, err := db.Prepare(insert_user)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			key := []byte("traveling is fun")
@@ -170,7 +169,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 
 			user_res, err := prepare_insert_user.Exec(id, u.Name, u.Username, u.Email, u.Mobile_number, u.Latitude, u.Longitude, encrypt_password, encrypt_password_confirmation, u.City, u.Devise_token, u.Type)
 			if err != nil || user_res == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			defer prepare_insert_user.Close()
@@ -178,20 +177,20 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 			var devise string = "insert into devices(devise_token,user_id)values ($1,$2)"
 			dev, err := db.Prepare(devise)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			dev_res, err := dev.Exec(u.Devise_token, id)
 			if err != nil || dev_res == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			var session string = "insert into sessions (user_id,devise_token) values ($1,$2)"
 			ses, err := db.Prepare(session)
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			session_res, err := ses.Exec(id, u.Devise_token)
 			if err != nil || session_res == nil {
-				log.Fatal(err)
+				panic(err)
 			}
 			fmt.Println("User created Successfully!")
 
@@ -205,7 +204,7 @@ func (r registrationController) Create(rw http.ResponseWriter, req *http.Request
 				})
 
 			if err != nil {
-				log.Fatal(err)
+				panic(err)
 			}
 
 			rw.Header().Set("Content-Type", "application/json")
