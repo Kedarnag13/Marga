@@ -17,7 +17,7 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 		response1, response2 = "Notification cannot be sent in loop!", ""
 		goto end
 	} else if user_session_existance == true {
-		tokens, err := db.Query("SELECT devise_token FROM devices WHERE user_id=$1", recieverid)
+		tokens, err := db.DBCon.Query("SELECT devise_token FROM devices WHERE user_id=$1", recieverid)
 		if err != nil {
 			panic(err)
 		}
