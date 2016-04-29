@@ -37,6 +37,10 @@
 			"ImportPath": "github.com/subosito/twilio",
 			"Comment": "v0.0.1-24-g2a2109f",
 			"Rev": "2a2109f2a1482f7e34b8018db21fab8b02335f43"
-		}
+		},
+		{
+			"ImportPath": "github.com/anachronistic/apns",
+			"Rev": "f90152b7e0ae845938ce1258d90072fd116131ac"
+		},
 	]
 }
