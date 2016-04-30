@@ -21,6 +21,7 @@ func Send_notification(senderid int, recieverid int, message string) (string, st
 		if err != nil {
 			panic(err)
 		}
+		defer tokens.Close()
 		for tokens.Next() {
 			var devise_token string
 			err := tokens.Scan(&devise_token)

@@ -94,6 +94,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+		defer fetch_point.Close()
 
 		for fetch_point.Next() {
 			var existing_points int
@@ -106,6 +107,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 			if err != nil || update_point == nil {
 				panic(err)
 			}
+			defer update_point.Close()
 
 			b, err := json.Marshal(models.SuccessMessage{
 				Success: "true",
