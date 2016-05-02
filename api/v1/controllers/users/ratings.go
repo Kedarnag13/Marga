@@ -106,6 +106,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 			if err != nil || update_point == nil {
 				panic(err)
 			}
+			defer update_point.Close()
 
 			b, err := json.Marshal(models.SuccessMessage{
 				Success: "true",

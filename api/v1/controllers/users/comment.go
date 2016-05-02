@@ -122,7 +122,6 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 		no_of_comment++
 		flag = 0
 	}
-	defer get_comments.Close()
 	if flag == 0 {
 		b, err := json.Marshal(models.CommentList{
 			Success:         "true",
