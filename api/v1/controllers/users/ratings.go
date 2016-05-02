@@ -94,7 +94,7 @@ func (r ratingsController) Create(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-
+		defer fetch_point.Close()
 		for fetch_point.Next() {
 			var existing_points int
 			err := fetch_point.Scan(&existing_points)

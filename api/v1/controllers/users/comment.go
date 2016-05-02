@@ -34,7 +34,7 @@ func (is commentController) Create(rw http.ResponseWriter, req *http.Request) {
 	if err != nil || get_issues == nil {
 		panic(err)
 	}
-
+	defer get_issues.Close()
 	for get_issues.Next() {
 		flag = 0
 		var issue_id int
@@ -94,7 +94,7 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 	if err != nil || get_comments == nil {
 		panic(err)
 	}
-
+	defer get_comments.Close()
 	var no_of_comment int
 	for get_comments.Next() {
 		var comment_message string
@@ -109,6 +109,7 @@ func (is commentController) Index(rw http.ResponseWriter, req *http.Request) {
 		if err != nil || get_user_details == nil {
 			panic(err)
 		}
+		defer get_user_details.Close()
 		for get_user_details.Next() {
 			err := get_user_details.Scan(&name)
 			if err != nil {
