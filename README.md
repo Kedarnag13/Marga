@@ -426,6 +426,30 @@ Response
 }
 ```
 
+### Forgot password (sends new password to the given mobile number)
+
+URL - http://localhost:3000/forgot_password
+
+Method POST
+
+Data has to be sent in raw format. Mobile number is of type integer
+
+```
+{"MobileNumber": 9916854333}
+```
+
+### Reset password (Update your password)
+
+URL - http://localhost:3000/reset_password
+
+Method POST
+
+Data has to be sent in raw format.
+
+```
+{"User_id": 1, "OldPassword": passowrd, "NewPassword": Qwinix123 }
+```
+
 ### To segrigate the cluster of issues
 
 URL -http://localhost:3000/cluster/issues
