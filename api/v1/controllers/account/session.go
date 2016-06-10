@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
+	"log"
 )
 
 type sessionController struct{}
@@ -31,6 +32,7 @@ func (s sessionController) Create(rw http.ResponseWriter, req *http.Request) {
 	response, error, user := session(u, true, false)
 
 	if error == true {
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   response,
@@ -42,6 +44,7 @@ func (s sessionController) Create(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 		goto end
 	} else {
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.SuccessfulSignIn{
 			Success: "true",
 			Message: "Logged in Successfully",
@@ -68,6 +71,7 @@ func (s *sessionController) Destroy(rw http.ResponseWriter, req *http.Request) {
 	response, error, user := session(u, false, true)
 
 	if error == true {
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   response,
@@ -79,6 +83,7 @@ func (s *sessionController) Destroy(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 		goto end
 	} else {
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.Message{
 			User:    user,
 			Success: "true",
@@ -144,6 +149,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			defer delete_devise.Close()
 			if logout == true {
 				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, ""}
+				log.Printf("Devise_token: %v\n", user.Devise_token)
 				return "Logged out Successfully", false, user
 			}
 		}
@@ -152,7 +158,10 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			return "Session does not exist", true, user
 		}
 		if login == true {
+
 			get_user, err := db.DBCon.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type FROM users WHERE mobile_number=$1", user.Mobile_number)
+			log.Printf("Devise_token: %v\n", user.Devise_token)
+			
 			if err != nil {
 				panic(err)
 			}
