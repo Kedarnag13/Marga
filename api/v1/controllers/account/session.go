@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 	"io/ioutil"
 	"net/http"
-	"fmt"
+	"log"
 )
 
 type sessionController struct{}
@@ -32,7 +32,7 @@ func (s sessionController) Create(rw http.ResponseWriter, req *http.Request) {
 	response, error, user := session(u, true, false)
 
 	if error == true {
-		fmt.Printf("response: %v \n", response)
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   response,
@@ -44,7 +44,7 @@ func (s sessionController) Create(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 		goto end
 	} else {
-		fmt.Printf("response: %v \n", response)
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.SuccessfulSignIn{
 			Success: "true",
 			Message: "Logged in Successfully",
@@ -71,7 +71,7 @@ func (s *sessionController) Destroy(rw http.ResponseWriter, req *http.Request) {
 	response, error, user := session(u, false, true)
 
 	if error == true {
-		fmt.Printf("response: %v \n", response)
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.ErrorMessage{
 			Success: "false",
 			Error:   response,
@@ -83,7 +83,7 @@ func (s *sessionController) Destroy(rw http.ResponseWriter, req *http.Request) {
 		rw.Write(b)
 		goto end
 	} else {
-		fmt.Printf("response: %v \n", response)
+		log.Printf("response: %v \n", response)
 		b, err := json.Marshal(models.Message{
 			User:    user,
 			Success: "true",
@@ -146,7 +146,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 			}
 			if logout == true {
 				user := models.User{0, "", "", "", "", 0, 0, "", "", "", user.Devise_token, ""}
-				fmt.Printf("Devise_token: %v\n", user.Devise_token)
+				log.Printf("Devise_token: %v\n", user.Devise_token)
 				return "Logged out Successfully", false, user
 			}
 		}
@@ -156,7 +156,7 @@ func session(user models.User, login, logout bool) (string, bool, models.User) {
 		}
 		if login == true {
 			get_user, err := db.Query("SELECT id,name,username, email, mobile_number, latitude, longitude, password, password_confirmation, city, device_token, type FROM users WHERE mobile_number=$1", user.Mobile_number)
-			fmt.Printf("Devise_token: %v\n", user.Devise_token)
+			log.Printf("Devise_token: %v\n", user.Devise_token)
 			if err != nil {
 				panic(err)
 			}
