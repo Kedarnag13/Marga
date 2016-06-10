@@ -1,11 +1,11 @@
 package account
 
 import (
-"database/sql"
 "encoding/json"
 "fmt"
 "github.com/Kedarnag13/Marga/api/v1/controllers"
 "github.com/Kedarnag13/Marga/api/v1/models"
+"github.com/Kedarnag13/Marga/api/v1/config/db"
 _ "github.com/lib/pq"
 "github.com/subosito/twilio"
 "io/ioutil"
@@ -46,11 +46,8 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		From       = "+13052406907"
 		To         = mobile_number
 		)
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-	user_exist, err := db.Query("SELECT mobile_number FROM users where mobile_number = $1", u.MobileNumber)
+
+	user_exist, err := db.DBCon.Query("SELECT mobile_number FROM users where mobile_number = $1", u.MobileNumber)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +93,7 @@ func (f *forgotpasswordController) SendPassword(rw http.ResponseWriter, req *htt
 		key := []byte("traveling is fun")
 		db_password := []byte(string(b))
 		encrypt_password := controllers.Encrypt(key, db_password)
-		update_pawssword, err := db.Query("UPDATE users set password = $1 where mobile_number = $2", encrypt_password, u.MobileNumber)
+		update_pawssword, err := db.DBCon.Query("UPDATE users set password = $1 where mobile_number = $2", encrypt_password, u.MobileNumber)
 		if err != nil || update_pawssword == nil {
 			panic(err)
 		}
@@ -139,11 +136,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 		panic(err)
 	}
 
-	db, err := sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-	get_password, err := db.Query("SELECT password FROM users where id = $1", u.User_id)
+	get_password, err := db.DBCon.Query("SELECT password FROM users where id = $1", u.User_id)
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +151,7 @@ func (f *forgotpasswordController) ResetPassword(rw http.ResponseWriter, req *ht
 		}
 
 		if decrypt_password == u.OldPassword {
-			update_pawssword, err := db.Query("UPDATE users set password = $1 where id = $2", u.NewPassword, u.User_id)
+			update_pawssword, err := db.DBCon.Query("UPDATE users set password = $1 where id = $2", u.NewPassword, u.User_id)
 			if err != nil || update_pawssword == nil {
 				panic(err)
 			}

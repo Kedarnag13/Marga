@@ -1,0 +1,15 @@
+development:
+    driver: postgres
+    open: user=postgres password=password dbname=marga_development sslmode=disable
+
+it:
+    driver: postgres
+    open: user=postgres password=password dbname=marga_it sslmode=disable
+
+test:
+    driver: postgres
+    open: user=postgres password=password dbname=marga_test
+
+production:
+    driver: postgres
+    open: user=postgres password=password dbname=marga_production

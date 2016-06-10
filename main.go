@@ -1,14 +1,23 @@
 package main
 
 import (
+	"database/sql"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/account"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/users"
+	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
 func main() {
+
+	var err error
+	db.DBCon, err = sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+	defer db.DBCon.Close()
 	r := mux.NewRouter()
 	// Account Routes
 	r.HandleFunc("/sign_up", account.Registration.Create).Methods("POST")
