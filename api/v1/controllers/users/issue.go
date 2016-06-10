@@ -29,7 +29,6 @@ func (is issueController) Index(rw http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 	defer get_all_issues.Close()
-
 	var issue_id int
 	var name string
 	var issue_type string
@@ -180,7 +179,7 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-
+		defer get_issues.Close()
 		if flag == 1 {
 			var issue_id int
 			var name string
@@ -254,7 +253,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			panic(err)
 		}
 		defer fetch_id.Close()
-
 		if flag == 1 {
 			if i.Name == "" || i.Type == "" || i.Description == "" || i.Image == "" || i.Status == false || i.Address == "" {
 				result, err := govalidator.ValidateStruct(i)
@@ -333,7 +331,6 @@ func (m issueController) MyIssues(rw http.ResponseWriter, req *http.Request) {
 			panic(err)
 		}
 		defer get_wards.Close()
-		
 		var no_of_wards int
 		for get_wards.Next() {
 			var id int
