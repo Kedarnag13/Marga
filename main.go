@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	//Setup environment
+	get_env := config.Setup_env(os.Args[1])
 
 	r := mux.NewRouter()
 	// Account Routes
