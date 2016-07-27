@@ -1,8 +1,6 @@
 package main
 
 import (
-	"database/sql"
-	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/account"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/users"
 	"github.com/gorilla/mux"
