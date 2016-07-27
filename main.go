@@ -45,7 +45,13 @@ func main() {
 	r.HandleFunc("/reset_password", account.ForgotPassword.ResetPassword).Methods("POST")
 
 	http.Handle("/", r)
-	// HTTP Listening Port
-	log.Println("main : Started : Listening on: http://localhost:3000 ...")
-	log.Fatal(http.ListenAndServe("0.0.0.0:3000", nil))
+
+	switch get_env {
+	case "it":
+		fmt.Printf("main : Started : Listening on: http://localhost:3001")
+		http.ListenAndServe("0.0.0.0:3001", nil)
+	default:
+		fmt.Printf("main : Started : Listening on: http://localhost:3000")
+		http.ListenAndServe("0.0.0.0:3000", nil)
+	}
 }
