@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Kedarnag13/Marga/api/v1/config"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/account"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/users"
 	"github.com/gorilla/mux"
 	"net/http"
+	"os"
 )
 
 func main() {
