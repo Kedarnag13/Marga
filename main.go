@@ -1,23 +1,19 @@
 package main
 
 import (
-	"database/sql"
+	"fmt"
+	"github.com/Kedarnag13/Marga/api/v1/config"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/account"
 	"github.com/Kedarnag13/Marga/api/v1/controllers/users"
-	"github.com/Kedarnag13/Marga/api/v1/config/db"
 	"github.com/gorilla/mux"
-	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	//Setup environment
+	get_env := config.Setup_env(os.Args[1])
 
-	var err error
-	db.DBCon, err = sql.Open("postgres", "password=password host=localhost dbname=marga_development sslmode=disable")
-	if err != nil {
-		panic(err)
-	}
-	defer db.DBCon.Close()
 	r := mux.NewRouter()
 	// Account Routes
 	r.HandleFunc("/sign_up", account.Registration.Create).Methods("POST")
@@ -51,7 +47,13 @@ func main() {
 	r.HandleFunc("/reset_password", account.ForgotPassword.ResetPassword).Methods("POST")
 
 	http.Handle("/", r)
-	// HTTP Listening Port
-	log.Println("main : Started : Listening on: http://localhost:3000 ...")
-	log.Fatal(http.ListenAndServe("0.0.0.0:3000", nil))
+
+	switch get_env {
+	case "it":
+		fmt.Printf("main : Started : Listening on: http://localhost:3001")
+		http.ListenAndServe("0.0.0.0:3001", nil)
+	default:
+		fmt.Printf("main : Started : Listening on: http://localhost:3000")
+		http.ListenAndServe("0.0.0.0:3000", nil)
+	}
 }
