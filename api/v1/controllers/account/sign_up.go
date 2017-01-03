@@ -61,7 +61,7 @@ func (reg registrationController) Create(rw http.ResponseWriter, req *http.Reque
 			rw.Write(b)
 			goto end
 		} else {
-			check_session_exists_for_mobile_number := db.First(&session, session.DeviseToken)
+			check_session_exists_for_mobile_number := db.First(&session, session.User.MobileNumber)
 			if check_session_exists_for_mobile_number.RecordNotFound() == true {
 				key := []byte("traveling is fun")
 				password := []byte(user.Password)
