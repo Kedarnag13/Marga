@@ -22,6 +22,8 @@ type Session struct {
 	gorm.Model
 	UserId      uint
 	DeviseToken string
+	User        User
+	Device      Device
 }
 
 type Device struct {
