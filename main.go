@@ -30,7 +30,7 @@ func main() {
 	r := mux.NewRouter()
 	// Account Routes
 	r.HandleFunc("/sign_up", account.Registration.Create).Methods("POST")
-	// r.HandleFunc("/log_in", account.Session.Create).Methods("POST")
+	r.HandleFunc("/sign_in", account.Session.Create).Methods("POST")
 	// r.HandleFunc("/log_out/{devise_token:([a-zA-Z0-9]+)?}", account.Session.Destroy).Methods("GET")
 
 	// // Issue Routes
