@@ -31,7 +31,7 @@ func main() {
 	// Account Routes
 	r.HandleFunc("/sign_up", account.Registration.Create).Methods("POST")
 	r.HandleFunc("/sign_in", account.Session.Create).Methods("POST")
-	// r.HandleFunc("/log_out/{devise_token:([a-zA-Z0-9]+)?}", account.Session.Destroy).Methods("GET")
+	r.HandleFunc("/sign_out/{devise_token:([a-zA-Z0-9]+)?}", account.Session.Destroy).Methods("GET")
 
 	// // Issue Routes
 	// r.HandleFunc("/create_issue", users.Issue.Create).Methods("POST")
@@ -60,8 +60,8 @@ func main() {
 	// r.HandleFunc("/reset_password", account.ForgotPassword.ResetPassword).Methods("POST")
 
 	http.Handle("/", r)
-	fmt.Printf("main : Started : Listening on: http://localhost:3001")
-	http.ListenAndServe("0.0.0.0:3001", nil)
+	fmt.Printf("main : Started : Listening on: http://localhost:3000")
+	http.ListenAndServe("0.0.0.0:3000", nil)
 
 	// switch get_env {
 	// case "it":
