@@ -22,14 +22,15 @@ type Session struct {
 	gorm.Model
 	UserId      uint
 	DeviseToken string
-	User        User
-	Device      Device
+	User        User   `gorm:"ForeignKey:UserId"`
+	Device      Device `gorm:"ForeignKey:DeviseToken"`
 }
 
 type Device struct {
 	gorm.Model
-	UserId    uint
-	SessionId uint
+	DeviseToken string `gorm:"primary_key:true"`
+	UserId      uint
+	SessionId   uint
 }
 
 type Response struct {
